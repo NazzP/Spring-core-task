@@ -1,9 +1,10 @@
 package org.example.gymcrmsystem.service.impl;
 
-import org.example.gymcrmsystem.dao.TrainerDAO;
-import org.example.gymcrmsystem.dto.TrainerDTO;
+import org.example.gymcrmsystem.repository.TrainerRepository;
+import org.example.gymcrmsystem.dto.TrainerDto;
 import org.example.gymcrmsystem.exception.NullObjectReferenceException;
 import org.example.gymcrmsystem.exception.ObjectNotFoundException;
+import org.example.gymcrmsystem.mapper.TrainerMapper;
 import org.example.gymcrmsystem.model.Trainer;
 import org.example.gymcrmsystem.service.TrainerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,39 +13,41 @@ import org.springframework.stereotype.Service;
 @Service
 public class TrainerServiceImpl implements TrainerService {
 
-    private final TrainerDAO trainerDAO;
+    private final TrainerRepository trainerDAO;
+    private final TrainerMapper trainerMapper;
 
     @Autowired
-    public TrainerServiceImpl(TrainerDAO trainerDAO) {
+    public TrainerServiceImpl(TrainerRepository trainerDAO, TrainerMapper trainerMapper) {
         this.trainerDAO = trainerDAO;
+        this.trainerMapper = trainerMapper;
     }
 
 
     @Override
-    public TrainerDTO create(TrainerDTO trainerDTO) {
+    public TrainerDto create(TrainerDto trainerDTO) {
         if (trainerDTO != null) {
-            return TrainerDTO.fromEntity(trainerDAO.save(trainerDTO.toEntity()));
+            return trainerMapper.convertToDto(trainerDAO.save(trainerMapper.convertToEntity(trainerDTO)));
         }
         throw new NullObjectReferenceException("Trainer cannot be 'null'");
     }
 
     @Override
-    public TrainerDTO select(Long id) {
-        return TrainerDTO.fromEntity(trainerDAO.findById(id).orElseThrow(
+    public TrainerDto select(Long id) {
+        return trainerMapper.convertToDto(trainerDAO.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("Trainer with id " + id + " wasn't found")
         ));
     }
 
     @Override
-    public TrainerDTO update(Long id, TrainerDTO trainerDTO) {
+    public TrainerDto update(Long id, TrainerDto trainerDTO) {
         Trainer existingTrainer = trainerDAO.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("Trainer with id " + id + " wasn't found")
         );
-        existingTrainer.setFirstName(trainerDTO.getUserDTO().getFirstName());
-        existingTrainer.setLastName(trainerDTO.getUserDTO().getLastName());
-        existingTrainer.setUsername(trainerDTO.getUserDTO().getUsername());
-        existingTrainer.setSpecialization(trainerDTO.getSpecialization().toEntity());
+        existingTrainer.setFirstName(trainerDTO.getFirstName());
+        existingTrainer.setLastName(trainerDTO.getLastName());
+        existingTrainer.setUsername(trainerDTO.getUsername());
+        existingTrainer.setSpecialization(trainerDTO.getSpecialization());
 
-        return TrainerDTO.fromEntity(trainerDAO.save(existingTrainer));
+        return trainerMapper.convertToDto(trainerDAO.save(existingTrainer));
     }
 }

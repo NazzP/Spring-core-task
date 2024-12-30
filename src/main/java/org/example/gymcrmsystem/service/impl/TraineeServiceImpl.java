@@ -1,9 +1,10 @@
 package org.example.gymcrmsystem.service.impl;
 
-import org.example.gymcrmsystem.dao.TraineeDAO;
-import org.example.gymcrmsystem.dto.TraineeDTO;
+import org.example.gymcrmsystem.repository.TraineeRepository;
+import org.example.gymcrmsystem.dto.TraineeDto;
 import org.example.gymcrmsystem.exception.NullObjectReferenceException;
 import org.example.gymcrmsystem.exception.ObjectNotFoundException;
+import org.example.gymcrmsystem.mapper.TraineeMapper;
 import org.example.gymcrmsystem.model.Trainee;
 import org.example.gymcrmsystem.service.TraineeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,40 +13,42 @@ import org.springframework.stereotype.Service;
 @Service
 public class TraineeServiceImpl implements TraineeService {
 
-    private final TraineeDAO traineeDAO;
+    private final TraineeRepository traineeDAO;
+    private final TraineeMapper traineeMapper;
 
     @Autowired
-    public TraineeServiceImpl(TraineeDAO traineeDAO) {
+    public TraineeServiceImpl(TraineeRepository traineeDAO, TraineeMapper traineeMapper) {
         this.traineeDAO = traineeDAO;
+        this.traineeMapper = traineeMapper;
     }
 
     @Override
-    public TraineeDTO create(TraineeDTO traineeDTO) {
+    public TraineeDto create(TraineeDto traineeDTO) {
         if (traineeDTO != null) {
-            return TraineeDTO.fromEntity(traineeDAO.save(traineeDTO.toEntity()));
+            return traineeMapper.convertToDto(traineeDAO.save(traineeMapper.convertToEntity(traineeDTO)));
         }
         throw new NullObjectReferenceException("Trainee cannot be 'null'");
     }
 
     @Override
-    public TraineeDTO select(Long id) {
-        return TraineeDTO.fromEntity(traineeDAO.findById(id).orElseThrow(
+    public TraineeDto select(Long id) {
+        return traineeMapper.convertToDto(traineeDAO.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("Trainee with id " + id + " wasn't found")
         ));
     }
 
     @Override
-    public TraineeDTO update(Long id, TraineeDTO traineeDTO) {
+    public TraineeDto update(Long id, TraineeDto traineeDTO) {
         Trainee existingTrainee = traineeDAO.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("Trainee with id " + id + " wasn't found")
         );
-        existingTrainee.setFirstName(traineeDTO.getUserDTO().getFirstName());
-        existingTrainee.setLastName(traineeDTO.getUserDTO().getLastName());
-        existingTrainee.setUsername(traineeDTO.getUserDTO().getUsername());
+        existingTrainee.setFirstName(traineeDTO.getFirstName());
+        existingTrainee.setLastName(traineeDTO.getLastName());
+        existingTrainee.setUsername(traineeDTO.getUsername());
         existingTrainee.setDateOfBirth(traineeDTO.getDateOfBirth());
         existingTrainee.setAddress(traineeDTO.getAddress());
 
-        return TraineeDTO.fromEntity(traineeDAO.save(existingTrainee));
+        return traineeMapper.convertToDto((traineeDAO.save(existingTrainee)));
     }
 
     @Override
