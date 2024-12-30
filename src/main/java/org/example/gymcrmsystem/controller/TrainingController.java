@@ -1,7 +1,7 @@
 package org.example.gymcrmsystem.controller;
 
 import org.example.gymcrmsystem.dto.TrainingDTO;
-import org.example.gymcrmsystem.service.TrainingService;
+import org.example.gymcrmsystem.facade.TrainingFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,20 +11,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/trainings")
 public class TrainingController {
 
-    private final TrainingService trainingService;
+    private final TrainingFacade trainingFacade;
 
     @Autowired
-    public TrainingController(TrainingService trainingService) {
-        this.trainingService = trainingService;
+    public TrainingController(TrainingFacade trainingFacade) {
+        this.trainingFacade = trainingFacade;
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<TrainingDTO> createTraining(@RequestBody TrainingDTO trainingDTO) {
-        return new ResponseEntity<>(trainingService.create(trainingDTO), HttpStatus.OK);
+        return new ResponseEntity<>(trainingFacade.createTraining(trainingDTO), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TrainingDTO> selectTraining(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(trainingService.select(id), HttpStatus.OK);
+    public ResponseEntity<TrainingDTO> getTraining(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(trainingFacade.getTrainingById(id), HttpStatus.OK);
     }
 }

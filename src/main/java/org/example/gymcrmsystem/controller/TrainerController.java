@@ -1,6 +1,7 @@
 package org.example.gymcrmsystem.controller;
 
 import org.example.gymcrmsystem.dto.TrainerDTO;
+import org.example.gymcrmsystem.facade.TrainerFacade;
 import org.example.gymcrmsystem.service.TrainerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,25 +12,25 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/trainers")
 public class TrainerController {
 
-    private final TrainerService trainerService;
+    private final TrainerFacade trainerFacade;
 
     @Autowired
-    public TrainerController(TrainerService trainerService) {
-        this.trainerService = trainerService;
+    public TrainerController(TrainerFacade trainerFacade) {
+        this.trainerFacade = trainerFacade;
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<TrainerDTO> createTrainer(@RequestBody TrainerDTO trainerDTO) {
-        return new ResponseEntity<>(trainerService.create(trainerDTO), HttpStatus.OK);
+        return new ResponseEntity<>(trainerFacade.createTrainer(trainerDTO), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TrainerDTO> selectTrainer(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(trainerService.select(id), HttpStatus.OK);
+    public ResponseEntity<TrainerDTO> getTrainer(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(trainerFacade.getTrainerById(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<TrainerDTO> updateTrainer(@PathVariable("id") Long id, @RequestBody TrainerDTO trainerDTO) {
-        return new ResponseEntity<>(trainerService.update(id, trainerDTO), HttpStatus.OK);
+        return new ResponseEntity<>(trainerFacade.updateTrainer(id, trainerDTO), HttpStatus.OK);
     }
 }
