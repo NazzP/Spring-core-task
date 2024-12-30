@@ -2,7 +2,6 @@ package org.example.gymcrmsystem.controller;
 
 import org.example.gymcrmsystem.dto.TrainerDTO;
 import org.example.gymcrmsystem.facade.TrainerFacade;
-import org.example.gymcrmsystem.service.TrainerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
