@@ -13,48 +13,48 @@ import org.springframework.stereotype.Service;
 @Service
 public class TraineeServiceImpl implements TraineeService {
 
-    private final TraineeRepository traineeDAO;
+    private final TraineeRepository traineeRepository;
     private final TraineeMapper traineeMapper;
 
     @Autowired
-    public TraineeServiceImpl(TraineeRepository traineeDAO, TraineeMapper traineeMapper) {
-        this.traineeDAO = traineeDAO;
+    public TraineeServiceImpl(TraineeRepository traineeRepository, TraineeMapper traineeMapper) {
+        this.traineeRepository = traineeRepository;
         this.traineeMapper = traineeMapper;
     }
 
     @Override
-    public TraineeDto create(TraineeDto traineeDTO) {
-        if (traineeDTO != null) {
-            return traineeMapper.convertToDto(traineeDAO.save(traineeMapper.convertToEntity(traineeDTO)));
+    public TraineeDto create(TraineeDto traineeDto) {
+        if (traineeDto != null) {
+            return traineeMapper.convertToDto(traineeRepository.save(traineeMapper.convertToEntity(traineeDto)));
         }
         throw new NullObjectReferenceException("Trainee cannot be 'null'");
     }
 
     @Override
     public TraineeDto select(Long id) {
-        return traineeMapper.convertToDto(traineeDAO.findById(id).orElseThrow(
+        return traineeMapper.convertToDto(traineeRepository.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("Trainee with id " + id + " wasn't found")
         ));
     }
 
     @Override
-    public TraineeDto update(Long id, TraineeDto traineeDTO) {
-        Trainee existingTrainee = traineeDAO.findById(id).orElseThrow(
+    public TraineeDto update(Long id, TraineeDto traineeDto) {
+        Trainee existingTrainee = traineeRepository.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("Trainee with id " + id + " wasn't found")
         );
-        existingTrainee.setFirstName(traineeDTO.getFirstName());
-        existingTrainee.setLastName(traineeDTO.getLastName());
-        existingTrainee.setUsername(traineeDTO.getUsername());
-        existingTrainee.setDateOfBirth(traineeDTO.getDateOfBirth());
-        existingTrainee.setAddress(traineeDTO.getAddress());
+        existingTrainee.setFirstName(traineeDto.getFirstName());
+        existingTrainee.setLastName(traineeDto.getLastName());
+        existingTrainee.setUsername(traineeDto.getUsername());
+        existingTrainee.setDateOfBirth(traineeDto.getDateOfBirth());
+        existingTrainee.setAddress(traineeDto.getAddress());
 
-        return traineeMapper.convertToDto((traineeDAO.save(existingTrainee)));
+        return traineeMapper.convertToDto((traineeRepository.save(existingTrainee)));
     }
 
     @Override
     public void delete(Long id) {
-        if (traineeDAO.findById(id).isPresent()) {
-            traineeDAO.deleteById(id);
+        if (traineeRepository.findById(id).isPresent()) {
+            traineeRepository.deleteById(id);
             return;
         }
         throw new ObjectNotFoundException("Trainee with id " + id + " wasn't found");

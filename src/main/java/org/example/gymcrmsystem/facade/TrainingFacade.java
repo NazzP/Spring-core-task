@@ -20,11 +20,11 @@ public interface TrainingFacade {
      * This method accepts a {@link TrainingDto} object containing the details of the new training session.
      * It passes the DTO to the service layer to handle the actual creation of the training.
      *
-     * @param trainingDTO A {@link TrainingDto} object containing the data for the new training session.
+     * @param trainingDto A {@link TrainingDto} object containing the data for the new training session.
      * @return The created {@link TrainingDto} with the assigned ID and any other relevant information.
      * @throws NullObjectReferenceException If the provided {@link TrainingDto} is null.
      */
-    TrainingDto createTraining(TrainingDto trainingDTO);
+    TrainingDto createTraining(TrainingDto trainingDto);
 
     /**
      * Retrieves a training session's information by its unique ID.

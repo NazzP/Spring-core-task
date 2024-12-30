@@ -12,26 +12,26 @@ import org.springframework.stereotype.Service;
 @Service
 public class TrainingServiceImpl implements TrainingService {
 
-    private final TrainingRepository trainingDAO;
+    private final TrainingRepository trainingRepository;
     private final TrainingMapper trainingMapper;
 
     @Autowired
-    public TrainingServiceImpl(TrainingRepository trainingDAO, TrainingMapper trainingMapper) {
-        this.trainingDAO = trainingDAO;
+    public TrainingServiceImpl(TrainingRepository trainingRepository, TrainingMapper trainingMapper) {
+        this.trainingRepository = trainingRepository;
         this.trainingMapper = trainingMapper;
     }
 
     @Override
-    public TrainingDto create(TrainingDto trainingDTO) {
-        if (trainingDTO != null) {
-            return trainingMapper.convertToDto(trainingDAO.save(trainingMapper.convertToEntity(trainingDTO)));
+    public TrainingDto create(TrainingDto trainingDto) {
+        if (trainingDto != null) {
+            return trainingMapper.convertToDto(trainingRepository.save(trainingMapper.convertToEntity(trainingDto)));
         }
         throw new NullObjectReferenceException("Training cannot be 'null'");
     }
 
     @Override
     public TrainingDto select(Long id) {
-        return trainingMapper.convertToDto(trainingDAO.findById(id).orElseThrow(
+        return trainingMapper.convertToDto(trainingRepository.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("Training with id " + id + " wasn't found")
         ));
     }

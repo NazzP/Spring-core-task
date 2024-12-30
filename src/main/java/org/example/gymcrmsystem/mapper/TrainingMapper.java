@@ -19,15 +19,15 @@ public class TrainingMapper {
                 .build();
     }
 
-    public Training convertToEntity(TrainingDto trainingDTO) {
+    public Training convertToEntity(TrainingDto trainingDto) {
         return Training.builder()
-                .id(trainingDTO.getId())
-                .traineeId(trainingDTO.getTraineeId())
-                .trainerId(trainingDTO.getTrainerId())
-                .trainingName(trainingDTO.getTrainingName())
-                .trainingType(trainingDTO.getTrainingType())
-                .date(trainingDTO.getDate())
-                .duration(trainingDTO.getDuration())
+                .id(trainingDto.getId())
+                .traineeId(trainingDto.getTraineeId())
+                .trainerId(trainingDto.getTrainerId())
+                .trainingName(trainingDto.getTrainingName())
+                .trainingType(trainingDto.getTrainingType())
+                .date(trainingDto.getDate())
+                .duration(trainingDto.getDuration())
                 .build();
     }
 }

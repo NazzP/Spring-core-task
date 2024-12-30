@@ -20,16 +20,16 @@ public class TraineeMapper {
                 .build();
     }
 
-    public Trainee convertToEntity(TraineeDto traineeDTO) {
+    public Trainee convertToEntity(TraineeDto traineeDto) {
         return Trainee.builder()
-                .id(traineeDTO.getId())
-                .firstName(traineeDTO.getFirstName())
-                .lastName(traineeDTO.getLastName())
-                .username(traineeDTO.getUsername())
-                .password(traineeDTO.getPassword())
-                .isActive(traineeDTO.isActive())
-                .dateOfBirth(traineeDTO.getDateOfBirth())
-                .address(traineeDTO.getAddress())
+                .id(traineeDto.getId())
+                .firstName(traineeDto.getFirstName())
+                .lastName(traineeDto.getLastName())
+                .username(traineeDto.getUsername())
+                .password(traineeDto.getPassword())
+                .isActive(traineeDto.isActive())
+                .dateOfBirth(traineeDto.getDateOfBirth())
+                .address(traineeDto.getAddress())
                 .build();
     }
 }

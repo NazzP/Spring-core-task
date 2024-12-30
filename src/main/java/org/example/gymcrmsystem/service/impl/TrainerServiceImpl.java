@@ -13,41 +13,41 @@ import org.springframework.stereotype.Service;
 @Service
 public class TrainerServiceImpl implements TrainerService {
 
-    private final TrainerRepository trainerDAO;
+    private final TrainerRepository trainerRepository;
     private final TrainerMapper trainerMapper;
 
     @Autowired
-    public TrainerServiceImpl(TrainerRepository trainerDAO, TrainerMapper trainerMapper) {
-        this.trainerDAO = trainerDAO;
+    public TrainerServiceImpl(TrainerRepository trainerRepository, TrainerMapper trainerMapper) {
+        this.trainerRepository = trainerRepository;
         this.trainerMapper = trainerMapper;
     }
 
 
     @Override
-    public TrainerDto create(TrainerDto trainerDTO) {
-        if (trainerDTO != null) {
-            return trainerMapper.convertToDto(trainerDAO.save(trainerMapper.convertToEntity(trainerDTO)));
+    public TrainerDto create(TrainerDto trainerDto) {
+        if (trainerDto != null) {
+            return trainerMapper.convertToDto(trainerRepository.save(trainerMapper.convertToEntity(trainerDto)));
         }
         throw new NullObjectReferenceException("Trainer cannot be 'null'");
     }
 
     @Override
     public TrainerDto select(Long id) {
-        return trainerMapper.convertToDto(trainerDAO.findById(id).orElseThrow(
+        return trainerMapper.convertToDto(trainerRepository.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("Trainer with id " + id + " wasn't found")
         ));
     }
 
     @Override
-    public TrainerDto update(Long id, TrainerDto trainerDTO) {
-        Trainer existingTrainer = trainerDAO.findById(id).orElseThrow(
+    public TrainerDto update(Long id, TrainerDto trainerDto) {
+        Trainer existingTrainer = trainerRepository.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("Trainer with id " + id + " wasn't found")
         );
-        existingTrainer.setFirstName(trainerDTO.getFirstName());
-        existingTrainer.setLastName(trainerDTO.getLastName());
-        existingTrainer.setUsername(trainerDTO.getUsername());
-        existingTrainer.setSpecialization(trainerDTO.getSpecialization());
+        existingTrainer.setFirstName(trainerDto.getFirstName());
+        existingTrainer.setLastName(trainerDto.getLastName());
+        existingTrainer.setUsername(trainerDto.getUsername());
+        existingTrainer.setSpecialization(trainerDto.getSpecialization());
 
-        return trainerMapper.convertToDto(trainerDAO.save(existingTrainer));
+        return trainerMapper.convertToDto(trainerRepository.save(existingTrainer));
     }
 }

@@ -17,8 +17,8 @@ public class TraineeFacadeImpl implements TraineeFacade {
     }
 
     @Override
-    public TraineeDto createTrainee(TraineeDto traineeDTO) {
-        return traineeService.create(traineeDTO);
+    public TraineeDto createTrainee(TraineeDto traineeDto) {
+        return traineeService.create(traineeDto);
     }
 
     @Override
@@ -27,8 +27,8 @@ public class TraineeFacadeImpl implements TraineeFacade {
     }
 
     @Override
-    public TraineeDto updateTrainee(Long id, TraineeDto traineeDTO) {
-        return traineeService.update(id, traineeDTO);
+    public TraineeDto updateTrainee(Long id, TraineeDto traineeDto) {
+        return traineeService.update(id, traineeDto);
     }
 
     @Override

@@ -17,8 +17,8 @@ public class TrainingFacadeImpl implements TrainingFacade {
     }
 
     @Override
-    public TrainingDto createTraining(TrainingDto trainingDTO) {
-        return trainingService.create(trainingDTO);
+    public TrainingDto createTraining(TrainingDto trainingDto) {
+        return trainingService.create(trainingDto);
     }
 
     @Override

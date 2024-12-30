@@ -20,11 +20,11 @@ public interface TraineeFacade {
      * This method accepts a {@link TraineeDto} object representing the details of the new trainee.
      * It passes the DTO to the service layer to handle the actual creation of the trainee.
      *
-     * @param traineeDTO A {@link TraineeDto} object containing the data for the new trainee.
+     * @param traineeDto A {@link TraineeDto} object containing the data for the new trainee.
      * @return The created {@link TraineeDto} with the assigned ID and any other relevant information.
      * @throws NullObjectReferenceException If the provided {@link TraineeDto} is null.
      */
-    TraineeDto createTrainee(TraineeDto traineeDTO);
+    TraineeDto createTrainee(TraineeDto traineeDto);
 
     /**
      * Retrieves a trainee's information by their unique ID.
@@ -44,11 +44,11 @@ public interface TraineeFacade {
      * It passes these to the service layer to update the corresponding trainee record.
      *
      * @param id The unique ID of the trainee to be updated.
-     * @param traineeDTO A {@link TraineeDto} containing the updated information for the trainee.
+     * @param traineeDto A {@link TraineeDto} containing the updated information for the trainee.
      * @return The updated {@link TraineeDto} with the new details.
      * @throws ObjectNotFoundException If no trainee with the given ID is found.
      */
-    TraineeDto updateTrainee(Long id, TraineeDto traineeDTO);
+    TraineeDto updateTrainee(Long id, TraineeDto traineeDto);
 
     /**
      * Deletes a trainee's record by their unique ID.

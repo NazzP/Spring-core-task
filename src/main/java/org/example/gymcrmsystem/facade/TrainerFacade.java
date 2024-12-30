@@ -20,11 +20,11 @@ public interface TrainerFacade {
      * This method accepts a {@link TrainerDto} object containing the details of the new trainer.
      * It passes the DTO to the service layer to handle the actual creation of the trainer.
      *
-     * @param trainerDTO A {@link TrainerDto} object containing the data for the new trainer.
+     * @param trainerDto A {@link TrainerDto} object containing the data for the new trainer.
      * @return The created {@link TrainerDto} with the assigned ID and any other relevant information.
      * @throws NullObjectReferenceException If the provided {@link TrainerDto} is null.
      */
-    TrainerDto createTrainer(TrainerDto trainerDTO);
+    TrainerDto createTrainer(TrainerDto trainerDto);
 
     /**
      * Retrieves a trainer's information by their unique ID.
@@ -44,9 +44,9 @@ public interface TrainerFacade {
      * It passes these to the service layer to update the corresponding trainer record.
      *
      * @param id The unique ID of the trainer to be updated.
-     * @param trainerDTO A {@link TrainerDto} containing the updated information for the trainer.
+     * @param trainerDto A {@link TrainerDto} containing the updated information for the trainer.
      * @return The updated {@link TrainerDto} with the new details.
      * @throws ObjectNotFoundException If no trainer with the given ID is found.
      */
-    TrainerDto updateTrainer(Long id, TrainerDto trainerDTO);
+    TrainerDto updateTrainer(Long id, TrainerDto trainerDto);
 }

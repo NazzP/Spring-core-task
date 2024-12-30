@@ -17,8 +17,8 @@ public class TrainerFacadeImpl implements TrainerFacade {
     }
 
     @Override
-    public TrainerDto createTrainer(TrainerDto trainerDTO) {
-        return trainerService.create(trainerDTO);
+    public TrainerDto createTrainer(TrainerDto trainerDto) {
+        return trainerService.create(trainerDto);
     }
 
     @Override
@@ -27,7 +27,7 @@ public class TrainerFacadeImpl implements TrainerFacade {
     }
 
     @Override
-    public TrainerDto updateTrainer(Long id, TrainerDto trainerDTO) {
-        return trainerService.update(id, trainerDTO);
+    public TrainerDto updateTrainer(Long id, TrainerDto trainerDto) {
+        return trainerService.update(id, trainerDto);
     }
 }
