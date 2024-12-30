@@ -1,6 +1,6 @@
 package org.example.gymcrmsystem.controller;
 
-import org.example.gymcrmsystem.dto.TrainerDTO;
+import org.example.gymcrmsystem.dto.TrainerDto;
 import org.example.gymcrmsystem.facade.TrainerFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,17 +19,17 @@ public class TrainerController {
     }
 
     @PostMapping
-    public ResponseEntity<TrainerDTO> createTrainer(@RequestBody TrainerDTO trainerDTO) {
+    public ResponseEntity<TrainerDto> createTrainer(@RequestBody TrainerDto trainerDTO) {
         return new ResponseEntity<>(trainerFacade.createTrainer(trainerDTO), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TrainerDTO> getTrainer(@PathVariable("id") Long id) {
+    public ResponseEntity<TrainerDto> getTrainer(@PathVariable("id") Long id) {
         return new ResponseEntity<>(trainerFacade.getTrainerById(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TrainerDTO> updateTrainer(@PathVariable("id") Long id, @RequestBody TrainerDTO trainerDTO) {
+    public ResponseEntity<TrainerDto> updateTrainer(@PathVariable("id") Long id, @RequestBody TrainerDto trainerDTO) {
         return new ResponseEntity<>(trainerFacade.updateTrainer(id, trainerDTO), HttpStatus.OK);
     }
 }

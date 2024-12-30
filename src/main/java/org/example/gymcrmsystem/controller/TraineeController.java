@@ -1,6 +1,6 @@
 package org.example.gymcrmsystem.controller;
 
-import org.example.gymcrmsystem.dto.TraineeDTO;
+import org.example.gymcrmsystem.dto.TraineeDto;
 import org.example.gymcrmsystem.facade.TraineeFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,17 +19,17 @@ public class TraineeController {
     }
 
     @PostMapping
-    public ResponseEntity<TraineeDTO> createTrainee(@RequestBody TraineeDTO traineeDTO) {
+    public ResponseEntity<TraineeDto> createTrainee(@RequestBody TraineeDto traineeDTO) {
         return new ResponseEntity<>(traineeFacade.createTrainee(traineeDTO), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TraineeDTO> getTrainee(@PathVariable Long id) {
+    public ResponseEntity<TraineeDto> getTrainee(@PathVariable Long id) {
         return new ResponseEntity<>(traineeFacade.getTraineeById(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TraineeDTO> updateTrainee(@PathVariable Long id, @RequestBody TraineeDTO traineeDTO) {
+    public ResponseEntity<TraineeDto> updateTrainee(@PathVariable Long id, @RequestBody TraineeDto traineeDTO) {
         return new ResponseEntity<>(traineeFacade.updateTrainee(id, traineeDTO), HttpStatus.OK);
     }
 

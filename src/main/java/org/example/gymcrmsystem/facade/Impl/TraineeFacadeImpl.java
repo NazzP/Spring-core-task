@@ -1,6 +1,6 @@
 package org.example.gymcrmsystem.facade.Impl;
 
-import org.example.gymcrmsystem.dto.TraineeDTO;
+import org.example.gymcrmsystem.dto.TraineeDto;
 import org.example.gymcrmsystem.facade.TraineeFacade;
 import org.example.gymcrmsystem.service.TraineeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +17,17 @@ public class TraineeFacadeImpl implements TraineeFacade {
     }
 
     @Override
-    public TraineeDTO createTrainee(TraineeDTO traineeDTO) {
+    public TraineeDto createTrainee(TraineeDto traineeDTO) {
         return traineeService.create(traineeDTO);
     }
 
     @Override
-    public TraineeDTO getTraineeById(Long id) {
+    public TraineeDto getTraineeById(Long id) {
         return traineeService.select(id);
     }
 
     @Override
-    public TraineeDTO updateTrainee(Long id, TraineeDTO traineeDTO) {
+    public TraineeDto updateTrainee(Long id, TraineeDto traineeDTO) {
         return traineeService.update(id, traineeDTO);
     }
 
