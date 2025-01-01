@@ -4,8 +4,8 @@ import org.example.gymcrmsystem.repository.TraineeRepository;
 import org.example.gymcrmsystem.repository.TrainerRepository;
 import org.example.gymcrmsystem.repository.TrainingRepository;
 import org.example.gymcrmsystem.dto.*;
-import org.example.gymcrmsystem.exception.NullObjectReferenceException;
-import org.example.gymcrmsystem.exception.ObjectNotFoundException;
+import org.example.gymcrmsystem.exception.NullEntityReferenceException;
+import org.example.gymcrmsystem.exception.EntityNotFoundException;
 import org.example.gymcrmsystem.mapper.TraineeMapper;
 import org.example.gymcrmsystem.mapper.TrainerMapper;
 import org.example.gymcrmsystem.mapper.TrainingMapper;
@@ -100,7 +100,7 @@ class TrainingServiceTest {
 
     @Test
     void create_ShouldThrowExceptionWhenDTOIsNull() {
-        assertThrows(NullObjectReferenceException.class, () -> trainingService.create(null));
+        assertThrows(NullEntityReferenceException.class, () -> trainingService.create(null));
         verify(trainingRepository, never()).save(any(Training.class));
     }
 
@@ -121,7 +121,7 @@ class TrainingServiceTest {
         Long trainingId = 1L;
         when(trainingRepository.findById(trainingId)).thenReturn(Optional.empty());
 
-        assertThrows(ObjectNotFoundException.class, () -> trainingService.select(trainingId));
+        assertThrows(EntityNotFoundException.class, () -> trainingService.select(trainingId));
         verify(trainingRepository, times(1)).findById(trainingId);
     }
 }

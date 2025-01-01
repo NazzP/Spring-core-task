@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ObjectNotFoundException.class)
-    public ResponseEntity<String> handleObjectNotFoundException(ObjectNotFoundException ex) {
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleObjectNotFoundException(EntityNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(NullObjectReferenceException.class)
-    public ResponseEntity<String> handleNullObjectReferenceException(NullObjectReferenceException ex) {
+    @ExceptionHandler(NullEntityReferenceException.class)
+    public ResponseEntity<String> handleNullObjectReferenceException(NullEntityReferenceException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

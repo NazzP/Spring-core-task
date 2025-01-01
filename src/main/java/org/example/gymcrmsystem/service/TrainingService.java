@@ -1,8 +1,8 @@
 package org.example.gymcrmsystem.service;
 
 import org.example.gymcrmsystem.dto.TrainingDto;
-import org.example.gymcrmsystem.exception.NullObjectReferenceException;
-import org.example.gymcrmsystem.exception.ObjectNotFoundException;
+import org.example.gymcrmsystem.exception.NullEntityReferenceException;
+import org.example.gymcrmsystem.exception.EntityNotFoundException;
 
 public interface TrainingService {
 
@@ -14,7 +14,7 @@ public interface TrainingService {
      *
      * @param trainingDTO - an object containing the details of the new Training session
      * @return The created {@link TrainingDto} with the assigned ID and relevant information
-     * @throws NullObjectReferenceException - if the provided {@link TrainingDto} is null
+     * @throws NullEntityReferenceException - if the provided {@link TrainingDto} is null
      */
     TrainingDto create(TrainingDto trainingDTO);
 
@@ -25,7 +25,7 @@ public interface TrainingService {
      *
      * @param id - the unique ID of the Training session to be retrieved
      * @return The {@link TrainingDto} containing the Training session's information
-     * @throws ObjectNotFoundException - if no Training session with the given ID is found
+     * @throws EntityNotFoundException - if no Training session with the given ID is found
      */
     TrainingDto select(Long id);
 }

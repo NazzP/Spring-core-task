@@ -1,8 +1,8 @@
 package org.example.gymcrmsystem.facade;
 
 import org.example.gymcrmsystem.dto.TraineeDto;
-import org.example.gymcrmsystem.exception.NullObjectReferenceException;
-import org.example.gymcrmsystem.exception.ObjectNotFoundException;
+import org.example.gymcrmsystem.exception.NullEntityReferenceException;
+import org.example.gymcrmsystem.exception.EntityNotFoundException;
 
 /**
  * Interface for managing operations related to trainees.
@@ -22,7 +22,7 @@ public interface TraineeFacade {
      *
      * @param traineeDto A {@link TraineeDto} object containing the data for the new trainee.
      * @return The created {@link TraineeDto} with the assigned ID and any other relevant information.
-     * @throws NullObjectReferenceException If the provided {@link TraineeDto} is null.
+     * @throws NullEntityReferenceException If the provided {@link TraineeDto} is null.
      */
     TraineeDto createTrainee(TraineeDto traineeDto);
 
@@ -33,7 +33,7 @@ public interface TraineeFacade {
      *
      * @param id The unique ID of the trainee to be retrieved.
      * @return The {@link TraineeDto} containing the trainee's information.
-     * @throws ObjectNotFoundException If no trainee with the given ID is found.
+     * @throws EntityNotFoundException If no trainee with the given ID is found.
      */
     TraineeDto getTraineeById(Long id);
 
@@ -46,7 +46,7 @@ public interface TraineeFacade {
      * @param id The unique ID of the trainee to be updated.
      * @param traineeDto A {@link TraineeDto} containing the updated information for the trainee.
      * @return The updated {@link TraineeDto} with the new details.
-     * @throws ObjectNotFoundException If no trainee with the given ID is found.
+     * @throws EntityNotFoundException If no trainee with the given ID is found.
      */
     TraineeDto updateTrainee(Long id, TraineeDto traineeDto);
 
@@ -57,7 +57,7 @@ public interface TraineeFacade {
      * It ensures that the record is removed from the database, and handles any necessary validation.
      *
      * @param id The unique ID of the trainee to be deleted.
-     * @throws ObjectNotFoundException If no trainee with the given ID is found.
+     * @throws EntityNotFoundException If no trainee with the given ID is found.
      */
     void deleteTrainee(Long id);
 }

@@ -2,8 +2,8 @@ package org.example.gymcrmsystem.service.impl;
 
 import org.example.gymcrmsystem.repository.TrainerRepository;
 import org.example.gymcrmsystem.dto.TrainerDto;
-import org.example.gymcrmsystem.exception.NullObjectReferenceException;
-import org.example.gymcrmsystem.exception.ObjectNotFoundException;
+import org.example.gymcrmsystem.exception.NullEntityReferenceException;
+import org.example.gymcrmsystem.exception.EntityNotFoundException;
 import org.example.gymcrmsystem.mapper.TrainerMapper;
 import org.example.gymcrmsystem.model.Trainer;
 import org.example.gymcrmsystem.service.TrainerService;
@@ -28,20 +28,20 @@ public class TrainerServiceImpl implements TrainerService {
         if (trainerDto != null) {
             return trainerMapper.convertToDto(trainerRepository.save(trainerMapper.convertToEntity(trainerDto)));
         }
-        throw new NullObjectReferenceException("Trainer cannot be 'null'");
+        throw new NullEntityReferenceException("Trainer cannot be 'null'");
     }
 
     @Override
     public TrainerDto select(Long id) {
         return trainerMapper.convertToDto(trainerRepository.findById(id).orElseThrow(
-                () -> new ObjectNotFoundException("Trainer with id " + id + " wasn't found")
+                () -> new EntityNotFoundException("Trainer with id " + id + " wasn't found")
         ));
     }
 
     @Override
     public TrainerDto update(Long id, TrainerDto trainerDto) {
         Trainer existingTrainer = trainerRepository.findById(id).orElseThrow(
-                () -> new ObjectNotFoundException("Trainer with id " + id + " wasn't found")
+                () -> new EntityNotFoundException("Trainer with id " + id + " wasn't found")
         );
         existingTrainer.setFirstName(trainerDto.getFirstName());
         existingTrainer.setLastName(trainerDto.getLastName());

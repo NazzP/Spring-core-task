@@ -1,8 +1,8 @@
 package org.example.gymcrmsystem.service;
 
 import org.example.gymcrmsystem.dto.TrainerDto;
-import org.example.gymcrmsystem.exception.NullObjectReferenceException;
-import org.example.gymcrmsystem.exception.ObjectNotFoundException;
+import org.example.gymcrmsystem.exception.NullEntityReferenceException;
+import org.example.gymcrmsystem.exception.EntityNotFoundException;
 
 public interface TrainerService {
 
@@ -14,7 +14,7 @@ public interface TrainerService {
      *
      * @param trainerDTO - an object containing the details of the new Trainer
      * @return The created {@link TrainerDto} with the assigned ID and relevant information
-     * @throws NullObjectReferenceException - if the provided {@link TrainerDto} is null
+     * @throws NullEntityReferenceException - if the provided {@link TrainerDto} is null
      */
     TrainerDto create(TrainerDto trainerDTO);
 
@@ -25,7 +25,7 @@ public interface TrainerService {
      *
      * @param id - the unique ID of the Trainer to be retrieved
      * @return The {@link TrainerDto} containing the Trainer's information
-     * @throws ObjectNotFoundException - if no Trainer with the given ID is found
+     * @throws EntityNotFoundException - if no Trainer with the given ID is found
      */
     TrainerDto select(Long id);
 
@@ -37,7 +37,7 @@ public interface TrainerService {
      * @param id         - the unique ID of the Trainer to be updated
      * @param trainerDTO - an object containing the updated information for the Trainer
      * @return The updated {@link TrainerDto} of the Trainer
-     * @throws ObjectNotFoundException - if no Trainer with the given ID is found
+     * @throws EntityNotFoundException - if no Trainer with the given ID is found
      */
     TrainerDto update(Long id, TrainerDto trainerDTO);
 }

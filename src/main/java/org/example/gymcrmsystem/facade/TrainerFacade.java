@@ -1,8 +1,8 @@
 package org.example.gymcrmsystem.facade;
 
 import org.example.gymcrmsystem.dto.TrainerDto;
-import org.example.gymcrmsystem.exception.NullObjectReferenceException;
-import org.example.gymcrmsystem.exception.ObjectNotFoundException;
+import org.example.gymcrmsystem.exception.NullEntityReferenceException;
+import org.example.gymcrmsystem.exception.EntityNotFoundException;
 
 /**
  * Interface for managing operations related to trainers.
@@ -22,7 +22,7 @@ public interface TrainerFacade {
      *
      * @param trainerDto A {@link TrainerDto} object containing the data for the new trainer.
      * @return The created {@link TrainerDto} with the assigned ID and any other relevant information.
-     * @throws NullObjectReferenceException If the provided {@link TrainerDto} is null.
+     * @throws NullEntityReferenceException If the provided {@link TrainerDto} is null.
      */
     TrainerDto createTrainer(TrainerDto trainerDto);
 
@@ -33,7 +33,7 @@ public interface TrainerFacade {
      *
      * @param id The unique ID of the trainer to be retrieved.
      * @return The {@link TrainerDto} containing the trainer's information.
-     * @throws ObjectNotFoundException If no trainer with the given ID is found.
+     * @throws EntityNotFoundException If no trainer with the given ID is found.
      */
     TrainerDto getTrainerById(Long id);
 
@@ -46,7 +46,7 @@ public interface TrainerFacade {
      * @param id The unique ID of the trainer to be updated.
      * @param trainerDto A {@link TrainerDto} containing the updated information for the trainer.
      * @return The updated {@link TrainerDto} with the new details.
-     * @throws ObjectNotFoundException If no trainer with the given ID is found.
+     * @throws EntityNotFoundException If no trainer with the given ID is found.
      */
     TrainerDto updateTrainer(Long id, TrainerDto trainerDto);
 }

@@ -1,8 +1,8 @@
 package org.example.gymcrmsystem.facade;
 
 import org.example.gymcrmsystem.dto.TrainingDto;
-import org.example.gymcrmsystem.exception.NullObjectReferenceException;
-import org.example.gymcrmsystem.exception.ObjectNotFoundException;
+import org.example.gymcrmsystem.exception.NullEntityReferenceException;
+import org.example.gymcrmsystem.exception.EntityNotFoundException;
 
 /**
  * Interface for managing operations related to training sessions.
@@ -22,7 +22,7 @@ public interface TrainingFacade {
      *
      * @param trainingDto A {@link TrainingDto} object containing the data for the new training session.
      * @return The created {@link TrainingDto} with the assigned ID and any other relevant information.
-     * @throws NullObjectReferenceException If the provided {@link TrainingDto} is null.
+     * @throws NullEntityReferenceException If the provided {@link TrainingDto} is null.
      */
     TrainingDto createTraining(TrainingDto trainingDto);
 
@@ -33,7 +33,7 @@ public interface TrainingFacade {
      *
      * @param id The unique ID of the training session to be retrieved.
      * @return The {@link TrainingDto} containing the training session's information.
-     * @throws ObjectNotFoundException If no training session with the given ID is found.
+     * @throws EntityNotFoundException If no training session with the given ID is found.
      */
     TrainingDto getTrainingById(Long id);
 }
