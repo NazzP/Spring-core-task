@@ -14,7 +14,7 @@ public class TrainerMapper {
                 .lastName(trainer.getLastName())
                 .username(trainer.getUsername())
                 .password(trainer.getPassword())
-                .isActive(trainer.isActive())
+                .isActive(trainer.getIsActive())
                 .specialization(trainer.getSpecialization())
                 .build();
     }
@@ -26,7 +26,7 @@ public class TrainerMapper {
                 .lastName(trainerDto.getLastName())
                 .username(trainerDto.getUsername())
                 .password(trainerDto.getPassword())
-                .isActive(trainerDto.isActive())
+                .isActive(trainerDto.getIsActive())
                 .specialization(trainerDto.getSpecialization())
                 .build();
     }

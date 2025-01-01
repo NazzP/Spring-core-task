@@ -1,44 +1,30 @@
 package org.example.gymcrmsystem.repository;
 
+import org.example.gymcrmsystem.config.AppConfig;
 import org.example.gymcrmsystem.model.Training;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.AfterEach;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 class TrainingDAOTest {
 
-    @Autowired
-    private TrainingRepository trainingDAO;
-
+    private AnnotationConfigApplicationContext context;
+    private TrainingRepository trainingRepository;
     private Training sampleTraining;
 
     @BeforeEach
     void setUp() {
-/*        sampleTrainer = Trainer.builder()
-                .firstName("Nazar")
-                .lastName("Panasiuk")
-                .username("nazar_panasiuk")
-                .password("password")
-                .isActive(true)
-                .specialization(TrainingType.builder().id(1L).trainingTypeName("Yoga").build())
-                .build();
+        // Ініціалізуємо контекст Spring
+        context = new AnnotationConfigApplicationContext(AppConfig.class);
 
-        sampleTrainer = Trainer.builder()
-                .firstName("Nazar")
-                .lastName("Panasiuk")
-                .username("nazar_panasiuk")
-                .password("password")
-                .isActive(true)
-                .specialization(TrainingType.builder().id(1L).trainingTypeName("Yoga").build())
-                .build();*/
+        // Отримуємо біни
+        trainingRepository = context.getBean(TrainingRepository.class);
 
         sampleTraining = Training.builder()
                 .id(1L)
@@ -52,7 +38,7 @@ class TrainingDAOTest {
 
     @Test
     void testSaveTrainer() {
-        Training savedTraining = trainingDAO.save(sampleTraining);
+        Training savedTraining = trainingRepository.save(sampleTraining);
 
         assertNotNull(savedTraining);
         assertEquals("Name", savedTraining.getTrainingName());
@@ -61,11 +47,17 @@ class TrainingDAOTest {
 
     @Test
     void testFindById() {
-        Training savedTraining = trainingDAO.save(sampleTraining);
+        Training savedTraining = trainingRepository.save(sampleTraining);
 
-        Optional<Training> foundTraining = trainingDAO.findById(savedTraining.getId());
+        Optional<Training> foundTraining = trainingRepository.findById(savedTraining.getId());
 
         assertTrue(foundTraining.isPresent());
         assertEquals(savedTraining.getTrainingName(), foundTraining.get().getTrainingName());
     }
+
+    @AfterEach
+    void tearDown() {
+        context.close();
+    }
 }
+

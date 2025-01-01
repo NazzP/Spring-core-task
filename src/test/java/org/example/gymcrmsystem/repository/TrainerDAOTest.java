@@ -1,27 +1,33 @@
 package org.example.gymcrmsystem.repository;
 
+import org.example.gymcrmsystem.config.AppConfig;
 import org.example.gymcrmsystem.model.Trainer;
 import org.example.gymcrmsystem.model.TrainingType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.AfterEach;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-public class TrainerDAOTest {
+class TrainerDAOTest {
 
-    @Autowired
-    private TrainerRepository trainerDAO;
-
+    private AnnotationConfigApplicationContext context;
+    private TrainerRepository trainerRepository;
     private Trainer sampleTrainer;
 
     @BeforeEach
     void setUp() {
+        // Ініціалізуємо контекст Spring
+        context = new AnnotationConfigApplicationContext(AppConfig.class);
+
+        // Отримуємо біни
+        trainerRepository = context.getBean(TrainerRepository.class);
+
         sampleTrainer = Trainer.builder()
+                .id(1L)
                 .firstName("Nazar")
                 .lastName("Panasiuk")
                 .username("nazar_panasiuk")
@@ -33,7 +39,7 @@ public class TrainerDAOTest {
 
     @Test
     void testSaveTrainer() {
-        Trainer savedTrainer = trainerDAO.save(sampleTrainer);
+        Trainer savedTrainer = trainerRepository.save(sampleTrainer);
 
         assertNotNull(savedTrainer);
         assertEquals("Nazar", savedTrainer.getFirstName());
@@ -42,11 +48,17 @@ public class TrainerDAOTest {
 
     @Test
     void testFindById() {
-        Trainer savedTrainer = trainerDAO.save(sampleTrainer);
+        Trainer savedTrainer = trainerRepository.save(sampleTrainer);
 
-        Optional<Trainer> foundTrainee = trainerDAO.findById(savedTrainer.getId());
+        Optional<Trainer> foundTrainer = trainerRepository.findById(savedTrainer.getId());
 
-        assertTrue(foundTrainee.isPresent());
-        assertEquals(savedTrainer.getFirstName(), foundTrainee.get().getFirstName());
+        assertTrue(foundTrainer.isPresent());
+        assertEquals(savedTrainer.getFirstName(), foundTrainer.get().getFirstName());
+    }
+
+    @AfterEach
+    void tearDown() {
+        context.close();
     }
 }
+

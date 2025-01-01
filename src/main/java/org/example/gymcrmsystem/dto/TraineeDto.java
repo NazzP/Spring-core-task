@@ -1,12 +1,13 @@
 package org.example.gymcrmsystem.dto;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
 
-@Value
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class TraineeDto implements Serializable {
     Long id;
@@ -14,7 +15,7 @@ public class TraineeDto implements Serializable {
     String lastName;
     String username;
     String password;
-    boolean isActive;
+    Boolean isActive;
     Date dateOfBirth;
     String address;
 }

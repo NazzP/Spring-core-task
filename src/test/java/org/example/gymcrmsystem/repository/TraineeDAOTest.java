@@ -1,27 +1,30 @@
 package org.example.gymcrmsystem.repository;
 
+import org.example.gymcrmsystem.config.AppConfig;
 import org.example.gymcrmsystem.model.Trainee;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 class TraineeDAOTest {
 
-    @Autowired
-    private TraineeRepository traineeDAO;
-
+    private AnnotationConfigApplicationContext context;
+    private TraineeRepository traineeRepository;
     private Trainee sampleTrainee;
 
     @BeforeEach
     void setUp() {
+        context = new AnnotationConfigApplicationContext(AppConfig.class);
+        traineeRepository = context.getBean(TraineeRepository.class);
+
         sampleTrainee = Trainee.builder()
+                .id(1L)
                 .firstName("Nazar")
                 .lastName("Panasiuk")
                 .username("nazar_panasiuk")
@@ -32,10 +35,9 @@ class TraineeDAOTest {
                 .build();
     }
 
-
     @Test
     void testSaveTrainee() {
-        Trainee savedTrainee = traineeDAO.save(sampleTrainee);
+        Trainee savedTrainee = traineeRepository.save(sampleTrainee);
 
         assertNotNull(savedTrainee);
         assertEquals("Nazar", savedTrainee.getFirstName());
@@ -44,9 +46,9 @@ class TraineeDAOTest {
 
     @Test
     void testFindById() {
-        Trainee savedTrainee = traineeDAO.save(sampleTrainee);
+        Trainee savedTrainee = traineeRepository.save(sampleTrainee);
 
-        Optional<Trainee> foundTrainee = traineeDAO.findById(savedTrainee.getId());
+        Optional<Trainee> foundTrainee = traineeRepository.findById(savedTrainee.getId());
 
         assertTrue(foundTrainee.isPresent());
         assertEquals(savedTrainee.getFirstName(), foundTrainee.get().getFirstName());
@@ -54,13 +56,19 @@ class TraineeDAOTest {
 
     @Test
     void testDeleteById() {
-        Trainee savedTrainee = traineeDAO.save(sampleTrainee);
-        Optional<Trainee> foundTrainee = traineeDAO.findById(savedTrainee.getId());
+        Trainee savedTrainee = traineeRepository.save(sampleTrainee);
+        Optional<Trainee> foundTrainee = traineeRepository.findById(savedTrainee.getId());
         assertTrue(foundTrainee.isPresent());
 
-        traineeDAO.deleteById(savedTrainee.getId());
+        traineeRepository.deleteById(savedTrainee.getId());
 
-        foundTrainee = traineeDAO.findById(savedTrainee.getId());
+        foundTrainee = traineeRepository.findById(savedTrainee.getId());
         assertFalse(foundTrainee.isPresent());
     }
+
+    @AfterEach
+    void tearDown() {
+        context.close();
+    }
 }
+

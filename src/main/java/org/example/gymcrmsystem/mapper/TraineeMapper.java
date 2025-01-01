@@ -14,7 +14,7 @@ public class TraineeMapper {
                 .lastName(trainee.getLastName())
                 .username(trainee.getUsername())
                 .password(trainee.getPassword())
-                .isActive(trainee.isActive())
+                .isActive(trainee.getIsActive())
                 .dateOfBirth(trainee.getDateOfBirth())
                 .address(trainee.getAddress())
                 .build();
@@ -27,7 +27,7 @@ public class TraineeMapper {
                 .lastName(traineeDto.getLastName())
                 .username(traineeDto.getUsername())
                 .password(traineeDto.getPassword())
-                .isActive(traineeDto.isActive())
+                .isActive(traineeDto.getIsActive())
                 .dateOfBirth(traineeDto.getDateOfBirth())
                 .address(traineeDto.getAddress())
                 .build();
