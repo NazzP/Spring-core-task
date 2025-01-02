@@ -1,8 +1,8 @@
 package org.example.gymcrmsystem.service.impl;
 
+import org.example.gymcrmsystem.exception.EntityAlreadyExistsException;
 import org.example.gymcrmsystem.repository.TraineeRepository;
 import org.example.gymcrmsystem.dto.TraineeDto;
-import org.example.gymcrmsystem.exception.NullEntityReferenceException;
 import org.example.gymcrmsystem.exception.EntityNotFoundException;
 import org.example.gymcrmsystem.mapper.TraineeMapper;
 import org.example.gymcrmsystem.model.Trainee;
@@ -27,12 +27,12 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public TraineeDto create(TraineeDto traineeDto) {
-        if (traineeDto != null) {
-            Trainee trainee = traineeMapper.convertToEntity(traineeDto);
-            trainee.setUsername(usernameGenerator.generateUniqueUsername(traineeDto));
-            return traineeMapper.convertToDto(traineeRepository.saveNew(trainee));
+        if (traineeRepository.findById(traineeDto.getId()).isPresent()) {
+            throw new EntityAlreadyExistsException("Trainee with id " + traineeDto.getId() + " already exists");
         }
-        throw new NullEntityReferenceException("Trainee cannot be 'null'");
+        Trainee trainee = traineeMapper.convertToEntity(traineeDto);
+        trainee.setUsername(usernameGenerator.generateUniqueUsername(traineeDto));
+        return traineeMapper.convertToDto(traineeRepository.save(trainee));
     }
 
     @Override

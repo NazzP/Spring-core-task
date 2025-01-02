@@ -1,24 +1,11 @@
 package org.example.gymcrmsystem.repository;
 
-import org.example.gymcrmsystem.exception.EntityAlreadyExistsException;
 import org.example.gymcrmsystem.model.Trainer;
 import org.example.gymcrmsystem.utils.UsernameGenerator;
 
 import java.util.Optional;
 
 public interface TrainerRepository extends UserRepository {
-
-    /**
-     * Saves a new Trainer entity to the data storage, ensuring that the entity does not already exist.
-     * <p>
-     * This method attempts to save a new Trainer entity. If an entity with the same ID already exists in the storage,
-     * it will throw an {@link EntityAlreadyExistsException}. If the entity does not exist, it will be saved and returned.
-     * <p>
-     * @param trainer - the {@link Trainer} entity to be saved
-     * @return The saved {@link Trainer} entity, or throws {@link EntityAlreadyExistsException} if the entity already exists
-     * @throws EntityAlreadyExistsException if a Trainer with the same ID already exists in the storage
-     */
-    Trainer saveNew(Trainer trainer) throws EntityAlreadyExistsException;
 
     /**
      * Saves a Trainer entity to the data storage.

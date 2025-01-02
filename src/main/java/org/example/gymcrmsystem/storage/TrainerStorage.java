@@ -17,10 +17,6 @@ public class TrainerStorage {
         trainerMap = new HashMap<>();
     }
 
-    public Trainer saveNew(Trainer trainer) {
-        return trainerMap.putIfAbsent(trainer.getId(), trainer);
-    }
-
     public void save(Long id, Trainer trainer) {
         trainerMap.put(id, trainer);
     }

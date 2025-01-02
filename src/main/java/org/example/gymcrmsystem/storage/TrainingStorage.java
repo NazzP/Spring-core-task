@@ -15,10 +15,6 @@ public class TrainingStorage {
         trainingMap = new HashMap<>();
     }
 
-    public Training saveNew(Training training) {
-        return trainingMap.putIfAbsent(training.getId(), training);
-    }
-
     public Training save(Training training) {
         return trainingMap.put(training.getId(), training);
     }

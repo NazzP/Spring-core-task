@@ -1,8 +1,8 @@
 package org.example.gymcrmsystem.service.impl;
 
+import org.example.gymcrmsystem.exception.EntityAlreadyExistsException;
 import org.example.gymcrmsystem.repository.TrainingRepository;
 import org.example.gymcrmsystem.dto.TrainingDto;
-import org.example.gymcrmsystem.exception.NullEntityReferenceException;
 import org.example.gymcrmsystem.exception.EntityNotFoundException;
 import org.example.gymcrmsystem.mapper.TrainingMapper;
 import org.example.gymcrmsystem.service.TrainingService;
@@ -23,10 +23,10 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public TrainingDto create(TrainingDto trainingDto) {
-        if (trainingDto != null) {
-            return trainingMapper.convertToDto(trainingRepository.save(trainingMapper.convertToEntity(trainingDto)));
+        if (trainingRepository.findById(trainingDto.getId()).isPresent()) {
+            throw new EntityAlreadyExistsException("Training with id " + trainingDto.getId() + " already exists");
         }
-        throw new NullEntityReferenceException("Training cannot be 'null'");
+        return trainingMapper.convertToDto(trainingRepository.save(trainingMapper.convertToEntity(trainingDto)));
     }
 
     @Override

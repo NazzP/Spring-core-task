@@ -1,6 +1,5 @@
 package org.example.gymcrmsystem.repository.impl;
 
-import org.example.gymcrmsystem.exception.EntityAlreadyExistsException;
 import org.example.gymcrmsystem.repository.TraineeRepository;
 import org.example.gymcrmsystem.model.Trainee;
 import org.example.gymcrmsystem.storage.TraineeStorage;
@@ -17,15 +16,6 @@ public class TraineeRepositoryImpl implements TraineeRepository {
     @Autowired
     public TraineeRepositoryImpl(TraineeStorage traineeStorage) {
         this.traineeStorage = traineeStorage;
-    }
-
-    @Override
-    public Trainee saveNew(Trainee trainee) {
-        Trainee existingTrainee = traineeStorage.saveNew(trainee);
-        if (existingTrainee != null) {
-            throw new EntityAlreadyExistsException("A trainee with ID " + trainee.getId() + " already exists");
-        }
-        return traineeStorage.get(trainee.getId());
     }
 
     @Override
