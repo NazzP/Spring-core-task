@@ -3,7 +3,9 @@ package org.example.gymcrmsystem.storage;
 import org.example.gymcrmsystem.model.Trainee;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -29,5 +31,9 @@ public class TraineeStorage {
 
     public void remove(Long id) {
         traineeMap.remove(id);
+    }
+
+    public List<Trainee> findAll() {
+        return new ArrayList<>(traineeMap.values());
     }
 }
