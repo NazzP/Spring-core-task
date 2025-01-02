@@ -10,6 +10,7 @@ import org.example.gymcrmsystem.exception.EntityNotFoundException;
 import org.example.gymcrmsystem.mapper.TrainerMapper;
 import org.example.gymcrmsystem.model.Trainer;
 import org.example.gymcrmsystem.service.TrainerService;
+import org.example.gymcrmsystem.utils.PasswordGenerator;
 import org.example.gymcrmsystem.utils.UsernameGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         for (TrainerDto trainerDto : trainers.values()) {
             trainerDto.setUsername(usernameGenerator.generateUniqueUsername(trainerDto));
+            trainerDto.setPassword(PasswordGenerator.generateRandomPassword());
             trainerRepository.save(trainerMapper.convertToEntity(trainerDto));
             LOGGER.info("Trainer with ID {} initialized and saved", trainerDto.getId());
         }
@@ -67,6 +69,7 @@ public class TrainerServiceImpl implements TrainerService {
         }
 
         Trainer trainer = trainerMapper.convertToEntity(trainerDto);
+        trainer.setPassword(PasswordGenerator.generateRandomPassword());
         trainer.setUsername(usernameGenerator.generateUniqueUsername(trainerDto));
         Trainer savedTrainer = trainerRepository.save(trainer);
         LOGGER.info("Created new Trainer with ID {}", savedTrainer.getId());
@@ -96,6 +99,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         existingTrainer.setFirstName(trainerDto.getFirstName());
         existingTrainer.setLastName(trainerDto.getLastName());
+        existingTrainer.setPassword(trainerDto.getPassword());
         existingTrainer.setUsername(usernameGenerator.generateUniqueUsername(trainerDto));
         existingTrainer.setSpecialization(trainerDto.getSpecialization());
 

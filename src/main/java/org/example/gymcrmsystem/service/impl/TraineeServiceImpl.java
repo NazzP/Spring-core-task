@@ -10,6 +10,7 @@ import org.example.gymcrmsystem.exception.EntityNotFoundException;
 import org.example.gymcrmsystem.mapper.TraineeMapper;
 import org.example.gymcrmsystem.model.Trainee;
 import org.example.gymcrmsystem.service.TraineeService;
+import org.example.gymcrmsystem.utils.PasswordGenerator;
 import org.example.gymcrmsystem.utils.UsernameGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ public class TraineeServiceImpl implements TraineeService {
         LOGGER.info("Loaded {} trainees from file {}", trainees.size(), traineesFilePath);
         for (TraineeDto traineeDto : trainees.values()) {
             traineeDto.setUsername(usernameGenerator.generateUniqueUsername(traineeDto));
+            traineeDto.setPassword(PasswordGenerator.generateRandomPassword());
             traineeRepository.save(traineeMapper.convertToEntity(traineeDto));
             LOGGER.info("Trainee {} initialized with username {}", traineeDto.getFirstName(), traineeDto.getUsername());
         }
@@ -64,6 +66,7 @@ public class TraineeServiceImpl implements TraineeService {
             throw new EntityAlreadyExistsException("Trainee with id " + traineeDto.getId() + " already exists");
         }
         Trainee trainee = traineeMapper.convertToEntity(traineeDto);
+        trainee.setPassword(PasswordGenerator.generateRandomPassword());
         trainee.setUsername(usernameGenerator.generateUniqueUsername(traineeDto));
         Trainee savedTrainee = traineeRepository.save(trainee);
         LOGGER.info("Trainee created with ID {}", savedTrainee.getId());
@@ -93,6 +96,7 @@ public class TraineeServiceImpl implements TraineeService {
         );
         existingTrainee.setFirstName(traineeDto.getFirstName());
         existingTrainee.setLastName(traineeDto.getLastName());
+        existingTrainee.setPassword(traineeDto.getPassword());
         existingTrainee.setUsername(usernameGenerator.generateUniqueUsername(traineeDto));
         existingTrainee.setDateOfBirth(traineeDto.getDateOfBirth());
         existingTrainee.setAddress(traineeDto.getAddress());
