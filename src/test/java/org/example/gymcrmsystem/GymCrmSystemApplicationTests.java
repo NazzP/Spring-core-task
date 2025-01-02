@@ -8,8 +8,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
@@ -21,10 +19,19 @@ class GymCrmSystemApplicationTests {
 
     @Test
     void contextLoads() {
-        String[] beanNames = applicationContext.getBeanDefinitionNames();
-        System.out.println(Arrays.toString(beanNames));
-        assertTrue(applicationContext.containsBean("traineeStorage"));
-        assertTrue(applicationContext.containsBean("trainerStorage"));
-        assertTrue(applicationContext.containsBean("trainingStorage"));
+        String[] expectedBeans = {
+                "traineeStorage", "trainerStorage", "trainingStorage", "appConfig",
+                "jacksonConfig", "objectMapper", "requestMappingHandlerAdapter",
+                "mappingJackson2HttpMessageConverter", "tomcatConfig", "tomcat",
+                "traineeController", "trainerController", "trainingController",
+                "globalExceptionHandler", "traineeFacadeImpl", "trainerFacadeImpl",
+                "trainingFacadeImpl", "traineeMapper", "trainerMapper", "trainingMapper",
+                "traineeRepositoryImpl", "trainerRepositoryImpl", "trainingRepositoryImpl",
+                "trainerServiceImpl", "trainingServiceImpl", "usernameGenerator", "jsonStorageParser"
+        };
+
+        for (String bean : expectedBeans) {
+            assertTrue(applicationContext.containsBean(bean), "Bean not found: " + bean);
+        }
     }
 }
