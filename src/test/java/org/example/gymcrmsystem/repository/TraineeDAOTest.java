@@ -25,9 +25,8 @@ class TraineeDAOTest {
 
         sampleTrainee = Trainee.builder()
                 .id(1L)
-                .firstName("Nazar")
-                .lastName("Panasiuk")
-                .username("nazar_panasiuk")
+                .firstName("Firstname")
+                .lastName("LastName")
                 .password("password")
                 .isActive(true)
                 .dateOfBirth(new Date())
@@ -36,16 +35,16 @@ class TraineeDAOTest {
     }
 
     @Test
-    void testSaveTrainee() {
+    void saveTraineeSuccess() {
         Trainee savedTrainee = traineeRepository.save(sampleTrainee);
 
         assertNotNull(savedTrainee);
-        assertEquals("Nazar", savedTrainee.getFirstName());
+        assertEquals("Firstname", savedTrainee.getFirstName());
         assertEquals(1L, savedTrainee.getId());
     }
 
     @Test
-    void testFindById() {
+    void findByIdSuccess() {
         Trainee savedTrainee = traineeRepository.save(sampleTrainee);
 
         Optional<Trainee> foundTrainee = traineeRepository.findById(savedTrainee.getId());
@@ -55,7 +54,7 @@ class TraineeDAOTest {
     }
 
     @Test
-    void testDeleteById() {
+    void deleteByIdSuccess() {
         Trainee savedTrainee = traineeRepository.save(sampleTrainee);
         Optional<Trainee> foundTrainee = traineeRepository.findById(savedTrainee.getId());
         assertTrue(foundTrainee.isPresent());
@@ -71,4 +70,3 @@ class TraineeDAOTest {
         context.close();
     }
 }
-

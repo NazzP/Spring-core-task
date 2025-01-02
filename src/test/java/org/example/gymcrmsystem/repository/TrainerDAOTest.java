@@ -20,17 +20,13 @@ class TrainerDAOTest {
 
     @BeforeEach
     void setUp() {
-        // Ініціалізуємо контекст Spring
         context = new AnnotationConfigApplicationContext(AppConfig.class);
-
-        // Отримуємо біни
         trainerRepository = context.getBean(TrainerRepository.class);
 
         sampleTrainer = Trainer.builder()
                 .id(1L)
-                .firstName("Nazar")
-                .lastName("Panasiuk")
-                .username("nazar_panasiuk")
+                .firstName("Firstname")
+                .lastName("LastName")
                 .password("password")
                 .isActive(true)
                 .specialization(TrainingType.builder().id(1L).trainingTypeName("Yoga").build())
@@ -38,16 +34,16 @@ class TrainerDAOTest {
     }
 
     @Test
-    void testSaveTrainer() {
+    void SaveTrainerSuccess() {
         Trainer savedTrainer = trainerRepository.save(sampleTrainer);
 
         assertNotNull(savedTrainer);
-        assertEquals("Nazar", savedTrainer.getFirstName());
+        assertEquals("Firstname", savedTrainer.getFirstName());
         assertEquals(1L, savedTrainer.getId());
     }
 
     @Test
-    void testFindById() {
+    void FindByIdSuccess() {
         Trainer savedTrainer = trainerRepository.save(sampleTrainer);
 
         Optional<Trainer> foundTrainer = trainerRepository.findById(savedTrainer.getId());
@@ -61,4 +57,3 @@ class TrainerDAOTest {
         context.close();
     }
 }
-

@@ -20,10 +20,7 @@ class TrainingDAOTest {
 
     @BeforeEach
     void setUp() {
-        // Ініціалізуємо контекст Spring
         context = new AnnotationConfigApplicationContext(AppConfig.class);
-
-        // Отримуємо біни
         trainingRepository = context.getBean(TrainingRepository.class);
 
         sampleTraining = Training.builder()
@@ -37,7 +34,7 @@ class TrainingDAOTest {
     }
 
     @Test
-    void testSaveTrainer() {
+    void saveTrainerSuccess() {
         Training savedTraining = trainingRepository.save(sampleTraining);
 
         assertNotNull(savedTraining);
@@ -46,7 +43,7 @@ class TrainingDAOTest {
     }
 
     @Test
-    void testFindById() {
+    void findByIdSuccess() {
         Training savedTraining = trainingRepository.save(sampleTraining);
 
         Optional<Training> foundTraining = trainingRepository.findById(savedTraining.getId());
@@ -60,4 +57,3 @@ class TrainingDAOTest {
         context.close();
     }
 }
-

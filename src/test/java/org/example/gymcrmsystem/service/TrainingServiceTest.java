@@ -1,13 +1,10 @@
 package org.example.gymcrmsystem.service;
 
-import org.example.gymcrmsystem.repository.TraineeRepository;
-import org.example.gymcrmsystem.repository.TrainerRepository;
+import org.example.gymcrmsystem.exception.EntityAlreadyExistsException;
+import org.example.gymcrmsystem.exception.EntityNotFoundException;
 import org.example.gymcrmsystem.repository.TrainingRepository;
 import org.example.gymcrmsystem.dto.*;
 import org.example.gymcrmsystem.exception.NullEntityReferenceException;
-import org.example.gymcrmsystem.exception.EntityNotFoundException;
-import org.example.gymcrmsystem.mapper.TraineeMapper;
-import org.example.gymcrmsystem.mapper.TrainerMapper;
 import org.example.gymcrmsystem.mapper.TrainingMapper;
 import org.example.gymcrmsystem.model.Training;
 import org.example.gymcrmsystem.model.TrainingType;
@@ -32,50 +29,21 @@ class TrainingServiceTest {
 
     @Mock
     private TrainingRepository trainingRepository;
-    @Mock
-    private TraineeRepository traineeRepository;
-    @Mock
-    private TrainerRepository trainerRepository;
-    @Spy
-    private TraineeMapper traineeMapper;
-    @Spy
-    private TrainerMapper trainerMapper;
+
     @Spy
     private TrainingMapper trainingMapper;
 
     @InjectMocks
     private TrainingServiceImpl trainingService;
 
-    private TrainingDto trainingDTO;
-    private Training training;
+    private Training sampleTraining;
+    private TrainingDto sampleTrainingDto;
+
 
     @BeforeEach
     void setUp() {
-        TraineeDto traineeDTO = TraineeDto.builder()
-                        .firstName("John")
-                        .lastName("Doe")
-                        .username("johndoe")
-                        .password("password")
-                        .isActive(true)
-                .dateOfBirth(new Date())
-                .address("123 Street")
-                .build();
-
-        TrainerDto trainerDTO = TrainerDto.builder()
-                        .firstName("Jane")
-                        .lastName("Smith")
-                        .username("janesmith")
-                        .password("password")
-                        .isActive(true)
-                .specialization(TrainingType.builder()
-                        .trainingTypeName("Fitness")
-                        .build())
-                .build();
-
-        traineeRepository.save(traineeMapper.convertToEntity(traineeDTO));
-        trainerRepository.save(trainerMapper.convertToEntity(trainerDTO));
-
-        trainingDTO = TrainingDto.builder()
+        sampleTrainingDto = TrainingDto.builder()
+                .id(4L)
                 .traineeId(1L)
                 .trainerId(1L)
                 .trainingName("Morning Cardio")
@@ -84,14 +52,14 @@ class TrainingServiceTest {
                 .duration(60)
                 .build();
 
-        training = trainingMapper.convertToEntity(trainingDTO);
+        sampleTraining = trainingMapper.convertToEntity(sampleTrainingDto);
     }
 
     @Test
-    void create_ShouldSaveTrainingAndReturnDTO() {
-        when(trainingRepository.save(any(Training.class))).thenReturn(training);
+    void createTrainingSuccess() {
+        when(trainingRepository.save(any(Training.class))).thenReturn(sampleTraining);
 
-        TrainingDto result = trainingService.create(trainingDTO);
+        TrainingDto result = trainingService.create(sampleTrainingDto);
 
         assertNotNull(result);
         assertEquals("Morning Cardio", result.getTrainingName());
@@ -99,15 +67,21 @@ class TrainingServiceTest {
     }
 
     @Test
-    void create_ShouldThrowExceptionWhenDTOIsNull() {
+    void createTrainingNullInput() {
         assertThrows(NullEntityReferenceException.class, () -> trainingService.create(null));
         verify(trainingRepository, never()).save(any(Training.class));
     }
 
     @Test
-    void select_ShouldReturnTrainingDTOWhenIdExists() {
-        Long trainingId = 1L;
-        when(trainingRepository.findById(trainingId)).thenReturn(Optional.of(training));
+    void createTrainingAlreadyExists() {
+        when(trainingRepository.findById(anyLong())).thenReturn(Optional.of(sampleTraining));
+        assertThrows(EntityAlreadyExistsException.class, () -> trainingService.create(sampleTrainingDto));
+    }
+
+    @Test
+    void selectTrainingSuccess() {
+        Long trainingId = 4L;
+        when(trainingRepository.findById(trainingId)).thenReturn(Optional.of(sampleTraining));
 
         TrainingDto result = trainingService.select(trainingId);
 
@@ -117,7 +91,7 @@ class TrainingServiceTest {
     }
 
     @Test
-    void select_ShouldThrowExceptionWhenIdDoesNotExist() {
+    void selectTrainingNotFound() {
         Long trainingId = 1L;
         when(trainingRepository.findById(trainingId)).thenReturn(Optional.empty());
 
