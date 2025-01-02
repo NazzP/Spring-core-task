@@ -1,0 +1,38 @@
+[
+  {
+    "id": 4,
+    "firstName": "Alice",
+    "lastName": "Brown",
+    "username": "alice.brown",
+    "password": "train123",
+    "isActive": true,
+    "specialization": {
+      "id": 1,
+      "trainingTypeName": "STRENGTH_TRAINING"
+    }
+  },
+  {
+    "id": 5,
+    "firstName": "Bob",
+    "lastName": "Taylor",
+    "username": "bob.taylor",
+    "password": "fitpass",
+    "isActive": true,
+    "specialization": {
+      "id": 2,
+      "trainingTypeName": "CARDIO"
+    }
+  },
+  {
+    "id": 6,
+    "firstName": "Clara",
+    "lastName": "Wilson",
+    "username": "clara.wilson",
+    "password": "securetrain",
+    "isActive": false,
+    "specialization": {
+      "id": 3,
+      "trainingTypeName": "YOGA"
+    }
+  }
+]

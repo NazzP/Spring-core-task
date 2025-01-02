@@ -4,6 +4,7 @@ import org.example.gymcrmsystem.repository.TrainerRepository;
 import org.example.gymcrmsystem.model.Trainer;
 import org.example.gymcrmsystem.storage.Storage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -14,7 +15,7 @@ public class TrainerRepositoryImpl implements TrainerRepository {
     private final Storage<Trainer> trainerStorage;
 
     @Autowired
-    public TrainerRepositoryImpl(Storage<Trainer> trainerStorage) {
+    public TrainerRepositoryImpl(@Qualifier("trainerStorage") Storage<Trainer> trainerStorage) {
         this.trainerStorage = trainerStorage;
     }
 

@@ -2,6 +2,7 @@ package org.example.gymcrmsystem.dto;
 
 import lombok.*;
 import org.example.gymcrmsystem.model.TrainingType;
+import org.example.gymcrmsystem.parser.Identifiable;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TrainingDto implements Serializable {
+public class TrainingDto implements Serializable, Identifiable<Long> {
     Long id;
     Long traineeId;
     Long trainerId;
