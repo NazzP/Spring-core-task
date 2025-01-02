@@ -2,6 +2,7 @@ package org.example.gymcrmsystem.service.impl;
 
 import jakarta.annotation.PostConstruct;
 import org.example.gymcrmsystem.exception.EntityAlreadyExistsException;
+import org.example.gymcrmsystem.exception.NullEntityReferenceException;
 import org.example.gymcrmsystem.parser.JsonStorageParser;
 import org.example.gymcrmsystem.repository.TraineeRepository;
 import org.example.gymcrmsystem.dto.TraineeDto;
@@ -10,6 +11,8 @@ import org.example.gymcrmsystem.mapper.TraineeMapper;
 import org.example.gymcrmsystem.model.Trainee;
 import org.example.gymcrmsystem.service.TraineeService;
 import org.example.gymcrmsystem.utils.UsernameGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,8 @@ import java.util.Map;
 
 @Service
 public class TraineeServiceImpl implements TraineeService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TraineeServiceImpl.class);
 
     private final JsonStorageParser<Long, TraineeDto> parser;
     private final TraineeRepository traineeRepository;
@@ -37,34 +42,54 @@ public class TraineeServiceImpl implements TraineeService {
 
     @PostConstruct
     private void initialize() {
+        LOGGER.info("Initializing trainees from file: {}", traineesFilePath);
         Map<Long, TraineeDto> trainees = parser.parseJsonToMap(traineesFilePath, TraineeDto.class);
-        for (TraineeDto traineeDto: trainees.values()){
-            usernameGenerator.generateUniqueUsername(traineeDto);
+        LOGGER.info("Loaded {} trainees from file {}", trainees.size(), traineesFilePath);
+        for (TraineeDto traineeDto : trainees.values()) {
+            traineeDto.setUsername(usernameGenerator.generateUniqueUsername(traineeDto));
             traineeRepository.save(traineeMapper.convertToEntity(traineeDto));
+            LOGGER.info("Trainee {} initialized with username {}", traineeDto.getFirstName(), traineeDto.getUsername());
         }
     }
 
     @Override
     public TraineeDto create(TraineeDto traineeDto) {
+        if (traineeDto == null) {
+            LOGGER.debug("Attempted to create trainee with null input");
+            throw new NullEntityReferenceException("Trainee cannot be null");
+        }
+        LOGGER.info("Creating trainee with ID {}", traineeDto.getId());
         if (traineeRepository.findById(traineeDto.getId()).isPresent()) {
+            LOGGER.debug("Trainee with ID {} already exists", traineeDto.getId());
             throw new EntityAlreadyExistsException("Trainee with id " + traineeDto.getId() + " already exists");
         }
         Trainee trainee = traineeMapper.convertToEntity(traineeDto);
         trainee.setUsername(usernameGenerator.generateUniqueUsername(traineeDto));
-        return traineeMapper.convertToDto(traineeRepository.save(trainee));
+        Trainee savedTrainee = traineeRepository.save(trainee);
+        LOGGER.info("Trainee created with ID {}", savedTrainee.getId());
+        return traineeMapper.convertToDto(savedTrainee);
     }
 
     @Override
     public TraineeDto select(Long id) {
-        return traineeMapper.convertToDto(traineeRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Trainee with id " + id + " wasn't found")
-        ));
+        LOGGER.info("Selecting trainee with ID {}", id);
+        Trainee trainee = traineeRepository.findById(id).orElseThrow(
+                () -> {
+                    LOGGER.debug("Trainee with ID {} not found", id);
+                    return new EntityNotFoundException("Trainee with id " + id + " wasn't found");
+                }
+        );
+        return traineeMapper.convertToDto(trainee);
     }
 
     @Override
     public TraineeDto update(Long id, TraineeDto traineeDto) {
+        LOGGER.info("Updating trainee with ID {}", id);
         Trainee existingTrainee = traineeRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Trainee with id " + id + " wasn't found")
+                () -> {
+                    LOGGER.debug("Trainee with ID {} wasn't found", id);
+                    return new EntityNotFoundException("Trainee with id " + id + " wasn't found");
+                }
         );
         existingTrainee.setFirstName(traineeDto.getFirstName());
         existingTrainee.setLastName(traineeDto.getLastName());
@@ -72,15 +97,20 @@ public class TraineeServiceImpl implements TraineeService {
         existingTrainee.setDateOfBirth(traineeDto.getDateOfBirth());
         existingTrainee.setAddress(traineeDto.getAddress());
 
-        return traineeMapper.convertToDto((traineeRepository.save(existingTrainee)));
+        Trainee updatedTrainee = traineeRepository.save(existingTrainee);
+        LOGGER.info("Trainee with ID {} updated", updatedTrainee.getId());
+        return traineeMapper.convertToDto(updatedTrainee);
     }
 
     @Override
     public void delete(Long id) {
+        LOGGER.info("Deleting trainee with ID {}", id);
         if (traineeRepository.findById(id).isPresent()) {
             traineeRepository.deleteById(id);
-            return;
+            LOGGER.info("Trainee with ID {} deleted", id);
+        } else {
+            LOGGER.debug("Trainee with ID {} isn't found", id);
+            throw new EntityNotFoundException("Trainee with id " + id + " wasn't found");
         }
-        throw new EntityNotFoundException("Trainee with id " + id + " wasn't found");
     }
 }

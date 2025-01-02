@@ -10,12 +10,12 @@ package org.example.gymcrmsystem.parser;
  * need to be processed in a consistent way, such as storing them in a map by their ID.
  * </p>
  */
- public interface Identifiable<ID> {
+ public interface Identifiable<K> {
 
     /**
      * Retrieves the unique identifier of the entity.
      *
      * @return the unique identifier of the entity, or {@code null} if not assigned
      */
-    ID getId();
+    K getId();
 }

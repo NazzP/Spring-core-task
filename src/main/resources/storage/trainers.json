@@ -3,7 +3,6 @@
     "id": 4,
     "firstName": "Alice",
     "lastName": "Brown",
-    "username": "alice.brown",
     "password": "train123",
     "isActive": true,
     "specialization": {
@@ -15,7 +14,6 @@
     "id": 5,
     "firstName": "Bob",
     "lastName": "Taylor",
-    "username": "bob.taylor",
     "password": "fitpass",
     "isActive": true,
     "specialization": {
@@ -26,8 +24,6 @@
   {
     "id": 6,
     "firstName": "Clara",
-    "lastName": "Wilson",
-    "username": "clara.wilson",
     "password": "securetrain",
     "isActive": false,
     "specialization": {
