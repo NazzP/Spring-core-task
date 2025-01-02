@@ -2,7 +2,7 @@ package org.example.gymcrmsystem.repository.impl;
 
 import org.example.gymcrmsystem.repository.TrainerRepository;
 import org.example.gymcrmsystem.model.Trainer;
-import org.example.gymcrmsystem.storage.TrainerStorage;
+import org.example.gymcrmsystem.storage.Storage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -11,10 +11,10 @@ import java.util.Optional;
 @Repository
 public class TrainerRepositoryImpl implements TrainerRepository {
 
-    private final TrainerStorage trainerStorage;
+    private final Storage<Trainer> trainerStorage;
 
     @Autowired
-    public TrainerRepositoryImpl(TrainerStorage trainerStorage) {
+    public TrainerRepositoryImpl(Storage<Trainer> trainerStorage) {
         this.trainerStorage = trainerStorage;
     }
 
