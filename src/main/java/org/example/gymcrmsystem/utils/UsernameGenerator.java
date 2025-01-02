@@ -1,24 +1,24 @@
 package org.example.gymcrmsystem.utils;
 
-import org.example.gymcrmsystem.dto.input.TraineeInputDto;
-import org.example.gymcrmsystem.dto.input.TrainerInputDto;
+import org.example.gymcrmsystem.dto.TraineeDto;
+import org.example.gymcrmsystem.dto.TrainerDto;
 import org.example.gymcrmsystem.repository.TraineeRepository;
 import org.example.gymcrmsystem.repository.TrainerRepository;
+import org.example.gymcrmsystem.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
 public class UsernameGenerator {
 
-    private final Map<Class<?>, Object> repositoryRegistry;
+    private final Map<Class<?>, UserRepository> repositoryRegistry;
 
     public UsernameGenerator(TrainerRepository trainerRepository, TraineeRepository traineeRepository) {
         repositoryRegistry = new HashMap<>();
-        repositoryRegistry.put(TrainerInputDto.class, trainerRepository);
-        repositoryRegistry.put(TraineeInputDto.class, traineeRepository);
+        repositoryRegistry.put(TrainerDto.class, trainerRepository);
+        repositoryRegistry.put(TraineeDto.class, traineeRepository);
     }
 
     public <T> String generateUniqueUsername(T entity) {
@@ -29,47 +29,41 @@ public class UsernameGenerator {
         String username = baseUsername;
         int suffix = 1;
 
-        Object repository = repositoryRegistry.get(entity.getClass());
-        if (repository == null) {
-            throw new IllegalArgumentException("No repository found for entity type " + entity.getClass().getSimpleName());
-        }
-
-        boolean exists = checkIfUsernameExists(repository, username);
+        boolean exists = checkIfUsernameExists(username);
 
         while (exists) {
             username = baseUsername + suffix;
             suffix++;
-            exists = checkIfUsernameExists(repository, username);
+            exists = checkIfUsernameExists(username);
         }
 
         return username;
     }
 
     private <T> String extractFirstName(T entity) {
-        return extractName(entity, "getFirstName");
+        if (entity instanceof TrainerDto trainerDto) {
+            return trainerDto.getFirstName();
+        } else if (entity instanceof TraineeDto traineeDto) {
+            return traineeDto.getFirstName();
+        }
+        throw new IllegalArgumentException("Unsupported entity type");
     }
 
     private <T> String extractLastName(T entity) {
-        return extractName(entity, "getLastName");
+        if (entity instanceof TrainerDto trainerDto) {
+            return trainerDto.getLastName();
+        } else if (entity instanceof TraineeDto traineeDto) {
+            return traineeDto.getLastName();
+        }
+        throw new IllegalArgumentException("Unsupported entity type");
     }
 
-    private <T> String extractName(T entity, String methodName) {
-        try {
-            Method method = entity.getClass().getMethod(methodName);
-            return (String) method.invoke(entity);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Error extracting name from entity: " + e.getMessage());
+    private boolean checkIfUsernameExists(String username) {
+        for (UserRepository repository : repositoryRegistry.values()) {
+            if (repository.existsByUsername(username)) {
+                return true;
+            }
         }
-    }
-
-    private boolean checkIfUsernameExists(Object repository, String username) {
-        try {
-            Method method = repository.getClass().getMethod("existsByUsername", String.class);
-            return (boolean) method.invoke(repository, username);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Error checking username existence: " + e.getMessage());
-        }
+        return false;
     }
 }
-
-
