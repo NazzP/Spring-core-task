@@ -1,5 +1,6 @@
 package org.example.gymcrmsystem.service.impl;
 
+import org.example.gymcrmsystem.model.Trainee;
 import org.example.gymcrmsystem.repository.TrainerRepository;
 import org.example.gymcrmsystem.dto.TrainerDto;
 import org.example.gymcrmsystem.exception.NullEntityReferenceException;
@@ -7,6 +8,7 @@ import org.example.gymcrmsystem.exception.EntityNotFoundException;
 import org.example.gymcrmsystem.mapper.TrainerMapper;
 import org.example.gymcrmsystem.model.Trainer;
 import org.example.gymcrmsystem.service.TrainerService;
+import org.example.gymcrmsystem.utils.UsernameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +16,13 @@ import org.springframework.stereotype.Service;
 public class TrainerServiceImpl implements TrainerService {
 
     private final TrainerRepository trainerRepository;
+    private final UsernameGenerator usernameGenerator;
     private final TrainerMapper trainerMapper;
 
     @Autowired
-    public TrainerServiceImpl(TrainerRepository trainerRepository, TrainerMapper trainerMapper) {
+    public TrainerServiceImpl(TrainerRepository trainerRepository, UsernameGenerator usernameGenerator, TrainerMapper trainerMapper) {
         this.trainerRepository = trainerRepository;
+        this.usernameGenerator = usernameGenerator;
         this.trainerMapper = trainerMapper;
     }
 
@@ -26,7 +30,9 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public TrainerDto create(TrainerDto trainerDto) {
         if (trainerDto != null) {
-            return trainerMapper.convertToDto(trainerRepository.save(trainerMapper.convertToEntity(trainerDto)));
+            Trainer trainer = trainerMapper.convertToEntity(trainerDto);
+            trainer.setUsername(usernameGenerator.generateUniqueUsername(trainerDto));
+            return trainerMapper.convertToDto(trainerRepository.saveNew(trainer));
         }
         throw new NullEntityReferenceException("Trainer cannot be 'null'");
     }
@@ -45,7 +51,7 @@ public class TrainerServiceImpl implements TrainerService {
         );
         existingTrainer.setFirstName(trainerDto.getFirstName());
         existingTrainer.setLastName(trainerDto.getLastName());
-        existingTrainer.setUsername(trainerDto.getUsername());
+        existingTrainer.setUsername(usernameGenerator.generateUniqueUsername(trainerDto));
         existingTrainer.setSpecialization(trainerDto.getSpecialization());
 
         return trainerMapper.convertToDto(trainerRepository.save(existingTrainer));
