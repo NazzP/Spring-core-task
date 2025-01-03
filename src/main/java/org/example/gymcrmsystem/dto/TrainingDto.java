@@ -12,11 +12,11 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class TrainingDto implements Serializable, Identifiable<Long> {
-    Long id;
-    Long traineeId;
-    Long trainerId;
-    String trainingName;
-    TrainingType trainingType;
-    Date date;
-    Number duration;
+    private Long id;
+    private Long traineeId;
+    private Long trainerId;
+    private String trainingName;
+    private TrainingType trainingType;
+    private Date date;
+    private Number duration;
 }

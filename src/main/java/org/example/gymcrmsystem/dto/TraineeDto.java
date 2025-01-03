@@ -10,13 +10,14 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = {"firstName", "lastName", "password", "address"})
 public class TraineeDto implements Serializable, Identifiable<Long> {
-    Long id;
-    String firstName;
-    String lastName;
-    String username;
-    String password;
-    Boolean isActive;
-    Date dateOfBirth;
-    String address;
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private String username;
+    private String password;
+    private Boolean isActive;
+    private Date dateOfBirth;
+    private String address;
 }

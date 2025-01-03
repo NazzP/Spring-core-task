@@ -10,12 +10,13 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = {"firstName", "lastName", "password"})
 public class TrainerDto implements Serializable, Identifiable<Long> {
-    Long id;
-    String firstName;
-    String lastName;
-    String username;
-    String password;
-    Boolean isActive;
-    TrainingType specialization;
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private String username;
+    private String password;
+    private Boolean isActive;
+    private TrainingType specialization;
 }

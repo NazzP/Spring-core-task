@@ -10,6 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @SuperBuilder
+@ToString(callSuper = true ,exclude = {"address"})
 public class Trainee extends User {
     private Date dateOfBirth;
     private String address;

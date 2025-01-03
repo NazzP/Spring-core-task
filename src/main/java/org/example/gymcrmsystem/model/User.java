@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"firstName", "lastName", "password"})
 public abstract class User {
     private Long id;
     private String firstName;

@@ -1,6 +1,7 @@
 package org.example.gymcrmsystem.service.impl;
 
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.example.gymcrmsystem.exception.EntityAlreadyExistsException;
 import org.example.gymcrmsystem.exception.NullEntityReferenceException;
 import org.example.gymcrmsystem.parser.JsonStorageParser;
@@ -20,10 +21,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+@Slf4j
 @Service
 public class TrainerServiceImpl implements TrainerService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrainerServiceImpl.class);
 
     private final JsonStorageParser<Long, TrainerDto> parser;
     private final TrainerRepository trainerRepository;
@@ -43,28 +43,28 @@ public class TrainerServiceImpl implements TrainerService {
 
     @PostConstruct
     private void initialize() {
-        LOGGER.info("Initializing Trainer Service: Loading trainers from file {}", trainersFilePath);
+        log.info("Initializing Trainer Service: Loading trainers from file {}", trainersFilePath);
         Map<Long, TrainerDto> trainers = parser.parseJsonToMap(trainersFilePath, TrainerDto.class);
-        LOGGER.info("Loaded {} trainers from file {}", trainers.size(), trainersFilePath);
+        log.info("Loaded {} trainers from file {}", trainers.size(), trainersFilePath);
 
         for (TrainerDto trainerDto : trainers.values()) {
             trainerDto.setUsername(usernameGenerator.generateUniqueUsername(trainerDto));
             trainerDto.setPassword(PasswordGenerator.generateRandomPassword());
             trainerRepository.save(trainerMapper.convertToEntity(trainerDto));
-            LOGGER.info("Trainer with ID {} initialized and saved", trainerDto.getId());
+            log.info("Trainer with ID {} initialized and saved", trainerDto.getId());
         }
     }
 
     @Override
     public TrainerDto create(TrainerDto trainerDto) {
         if (trainerDto == null) {
-            LOGGER.debug("Attempted to create trainer with null input");
+            log.debug("Attempted to create trainer with null input");
             throw new NullEntityReferenceException("Trainer cannot be null");
         }
-        LOGGER.info("Attempting to create Trainer with ID {}", trainerDto.getId());
+        log.info("Attempting to create Trainer with ID {}", trainerDto.getId());
 
         if (trainerRepository.findById(trainerDto.getId()).isPresent()) {
-            LOGGER.warn("Trainer with ID {} already exists", trainerDto.getId());
+            log.warn("Trainer with ID {} already exists", trainerDto.getId());
             throw new EntityAlreadyExistsException("Trainer with id " + trainerDto.getId() + " already exists");
         }
 
@@ -72,26 +72,26 @@ public class TrainerServiceImpl implements TrainerService {
         trainer.setPassword(PasswordGenerator.generateRandomPassword());
         trainer.setUsername(usernameGenerator.generateUniqueUsername(trainerDto));
         Trainer savedTrainer = trainerRepository.save(trainer);
-        LOGGER.info("Created new Trainer with ID {}", savedTrainer.getId());
+        log.info("Created new Trainer with ID {}", savedTrainer.getId());
 
         return trainerMapper.convertToDto(savedTrainer);
     }
 
     @Override
     public TrainerDto select(Long id) {
-        LOGGER.info("Selecting Trainer with ID {}", id);
+        log.info("Selecting Trainer with ID {}", id);
 
         Trainer trainer = trainerRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Trainer with id " + id + " wasn't found")
         );
-        LOGGER.info("Trainer with ID {} found", id);
+        log.info("Trainer with ID {} found", id);
 
         return trainerMapper.convertToDto(trainer);
     }
 
     @Override
     public TrainerDto update(Long id, TrainerDto trainerDto) {
-        LOGGER.info("Updating Trainer with ID {}", id);
+        log.info("Updating Trainer with ID {}", id);
 
         Trainer existingTrainer = trainerRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Trainer with id " + id + " wasn't found")
@@ -104,7 +104,7 @@ public class TrainerServiceImpl implements TrainerService {
         existingTrainer.setSpecialization(trainerDto.getSpecialization());
 
         Trainer updatedTrainer = trainerRepository.save(existingTrainer);
-        LOGGER.info("Trainer with ID {} updated successfully", updatedTrainer.getId());
+        log.info("Trainer with ID {} updated successfully", updatedTrainer.getId());
 
         return trainerMapper.convertToDto(updatedTrainer);
     }

@@ -1,22 +1,18 @@
 package org.example.gymcrmsystem.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.example.gymcrmsystem.dto.TraineeDto;
 import org.example.gymcrmsystem.facade.TraineeFacade;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/trainees")
+@RequiredArgsConstructor
 public class TraineeController {
 
     private final TraineeFacade traineeFacade;
-
-    @Autowired
-    public TraineeController(TraineeFacade traineeFacade) {
-        this.traineeFacade = traineeFacade;
-    }
 
     @PostMapping
     public ResponseEntity<TraineeDto> createTrainee(@RequestBody TraineeDto traineeDTO) {
