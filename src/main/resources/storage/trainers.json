@@ -1,0 +1,31 @@
+[
+  {
+    "id": 4,
+    "firstName": "Alice",
+    "lastName": "Brown",
+    "isActive": true,
+    "specialization": {
+      "id": 1,
+      "trainingTypeName": "STRENGTH_TRAINING"
+    }
+  },
+  {
+    "id": 5,
+    "firstName": "Bob",
+    "lastName": "Taylor",
+    "isActive": true,
+    "specialization": {
+      "id": 2,
+      "trainingTypeName": "CARDIO"
+    }
+  },
+  {
+    "id": 6,
+    "firstName": "Clara",
+    "isActive": false,
+    "specialization": {
+      "id": 3,
+      "trainingTypeName": "YOGA"
+    }
+  }
+]
