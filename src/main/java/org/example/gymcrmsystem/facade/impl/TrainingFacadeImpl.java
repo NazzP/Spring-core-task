@@ -1,4 +1,4 @@
-package org.example.gymcrmsystem.facade.Impl;
+package org.example.gymcrmsystem.facade.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.gymcrmsystem.dto.TrainingDto;
