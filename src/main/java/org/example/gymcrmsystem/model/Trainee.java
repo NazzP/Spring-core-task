@@ -1,6 +1,10 @@
 package org.example.gymcrmsystem.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Date;
@@ -10,8 +14,9 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @SuperBuilder
-@ToString(callSuper = true ,exclude = {"address"})
 public class Trainee extends User {
+    @ToString.Exclude
     private Date dateOfBirth;
+    @ToString.Exclude
     private String address;
 }

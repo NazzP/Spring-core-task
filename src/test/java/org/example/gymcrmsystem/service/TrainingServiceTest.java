@@ -2,6 +2,7 @@ package org.example.gymcrmsystem.service;
 
 import org.example.gymcrmsystem.exception.EntityAlreadyExistsException;
 import org.example.gymcrmsystem.exception.EntityNotFoundException;
+import org.example.gymcrmsystem.mapper.TrainingMapperImpl;
 import org.example.gymcrmsystem.repository.TrainingRepository;
 import org.example.gymcrmsystem.dto.*;
 import org.example.gymcrmsystem.exception.NullEntityReferenceException;
@@ -20,9 +21,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class TrainingServiceTest {
@@ -31,7 +38,7 @@ class TrainingServiceTest {
     private TrainingRepository trainingRepository;
 
     @Spy
-    private TrainingMapper trainingMapper;
+    private TrainingMapper trainingMapper = new TrainingMapperImpl();
 
     @InjectMocks
     private TrainingServiceImpl trainingService;

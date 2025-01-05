@@ -6,7 +6,8 @@ import org.example.gymcrmsystem.repository.TraineeRepository;
 import org.example.gymcrmsystem.repository.TrainerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -92,18 +93,20 @@ class UsernameGeneratorTest {
         traineeDto.setFirstName("Name");
         traineeDto.setLastName("Surname");
 
-        when(trainerRepository.existsByUsername("Name.Surname")).thenReturn(true);
-        when(trainerRepository.existsByUsername("Name.Surname1")).thenReturn(true);
+        when(trainerRepository.existsByUsername("Name.Surname")).thenReturn(false);
+        when(traineeRepository.existsByUsername("Name.Surname")).thenReturn(true);
+        when(traineeRepository.existsByUsername("Name.Surname1")).thenReturn(false);
 
-        usernameGenerator.generateUniqueUsername(trainerDto);
-        String username2 = usernameGenerator.generateUniqueUsername(traineeDto);
-        assertEquals("Name.Surname2", username2);
+        String username = usernameGenerator.generateUniqueUsername(traineeDto);
+        assertEquals("Name.Surname1", username);
     }
 
     @Test
     void generateUniqueUsernameForUnsupportedEntityType() {
         Object invalidEntity = new Object();
-        assertThrows(IllegalArgumentException.class, () -> usernameGenerator.generateUniqueUsername(invalidEntity));
+        assertThrows(IllegalArgumentException.class,
+                () -> usernameGenerator.generateUniqueUsername(invalidEntity),
+                "Expected an IllegalArgumentException for unsupported entity type");
     }
 
 }

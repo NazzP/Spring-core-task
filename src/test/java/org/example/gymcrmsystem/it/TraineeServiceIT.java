@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AppConfig.class)
-class TraineeIT {
+class TraineeServiceIT {
 
     @Autowired
     private TraineeServiceImpl traineeService;
@@ -30,7 +30,7 @@ class TraineeIT {
     private TraineeDto traineeDto;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         traineeDto = new TraineeDto();
         traineeDto.setId(4L);
         traineeDto.setFirstName("FirstName");
@@ -38,7 +38,7 @@ class TraineeIT {
     }
 
     @AfterEach
-    public void cleat() {
+    void cleat() {
         traineeStorage.remove(4L);
     }
 
@@ -59,8 +59,8 @@ class TraineeIT {
     @Test
     void createTrainee_entityAlreadyExists() {
         traineeService.create(traineeDto);
-
-        assertThrows(EntityAlreadyExistsException.class, () -> traineeService.create(traineeDto));
+        assertThrows(EntityAlreadyExistsException.class, () -> traineeService.create(traineeDto),
+                "Trainee with id 4 already exists");
     }
 
     @Test
@@ -80,7 +80,8 @@ class TraineeIT {
 
     @Test
     void selectTrainee_notFound() {
-        assertThrows(EntityNotFoundException.class, () -> traineeService.select(4L));
+        assertThrows(EntityNotFoundException.class, () -> traineeService.select(4L),
+                "Trainee with id 4 wasn't found");
     }
 
     @Test
@@ -110,7 +111,8 @@ class TraineeIT {
         updatedDto.setFirstName("Updated");
         updatedDto.setLastName("UserName");
 
-        assertThrows(EntityNotFoundException.class, () -> traineeService.update(9L, updatedDto));
+        assertThrows(EntityNotFoundException.class, () -> traineeService.update(9L, updatedDto),
+                "Trainee with id 9 wasn't found");
     }
 
     @Test
@@ -125,7 +127,7 @@ class TraineeIT {
 
     @Test
     void deleteTrainee_notFound() {
-        assertThrows(EntityNotFoundException.class, () -> traineeService.delete(4L));
+        assertThrows(EntityNotFoundException.class, () -> traineeService.delete(4L),
+                "Trainee with id 4 wasn't found");
     }
 }
-

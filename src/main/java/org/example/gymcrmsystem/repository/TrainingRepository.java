@@ -26,3 +26,4 @@ public interface TrainingRepository {
      */
     Optional<Training> findById(Long id);
 }
+

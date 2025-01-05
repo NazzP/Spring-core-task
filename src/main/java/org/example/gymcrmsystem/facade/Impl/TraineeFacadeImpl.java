@@ -1,20 +1,16 @@
 package org.example.gymcrmsystem.facade.Impl;
 
+import lombok.RequiredArgsConstructor;
 import org.example.gymcrmsystem.dto.TraineeDto;
 import org.example.gymcrmsystem.facade.TraineeFacade;
 import org.example.gymcrmsystem.service.TraineeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
+@RequiredArgsConstructor
 public class TraineeFacadeImpl implements TraineeFacade {
 
     private final TraineeService traineeService;
-
-    @Autowired
-    public TraineeFacadeImpl(TraineeService traineeService) {
-        this.traineeService = traineeService;
-    }
 
     @Override
     public TraineeDto createTrainee(TraineeDto traineeDto) {

@@ -26,29 +26,29 @@ public class JsonStorageParser<K, T extends Identifiable<K>> {
     public Map<K, T> parseJsonToMap(String filePath, Class<T> type) {
         Map<K, T> storageMap = new HashMap<>();
         try {
-            log.info("Starting JSON parsing for file: {}", filePath);
+            LOGGER.info("Starting JSON parsing for file: {}", filePath);
 
             JavaType javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, type);
             List<T> entities = objectMapper.readValue(new File(filePath), javaType);
 
-            log.debug("Successfully read {} entities from file: {}", entities.size(), filePath);
+            LOGGER.debug("Successfully read {} entities from file: {}", entities.size(), filePath);
 
             for (T entity : entities) {
                 K id = entity.getId();
                 if (id == null) {
-                    log.warn("Entity with null ID encountered: {}", entity);
+                    LOGGER.warn("Entity with null ID encountered: {}", entity);
                     throw new IllegalArgumentException("Entity ID cannot be null for entity: " + entity);
                 }
                 storageMap.put(id, entity);
             }
 
-            log.info("Successfully parsed JSON into {} entities.", storageMap.size());
+            LOGGER.info("Successfully parsed JSON into {} entities.", storageMap.size());
         } catch (IOException e) {
-            log.warn("Error reading or parsing JSON file: {}", filePath, e);
+            LOGGER.warn("Error reading or parsing JSON file: {}", filePath, e);
         } catch (IllegalArgumentException e) {
-            log.warn("Illegal argument: {}", e.getMessage(), e);
+            LOGGER.warn("Illegal argument: {}", e.getMessage(), e);
         } catch (Exception e) {
-            log.warn("Unexpected error occurred while parsing JSON file: {}", filePath, e);
+            LOGGER.warn("Unexpected error occurred while parsing JSON file: {}", filePath, e);
         }
         return storageMap;
     }

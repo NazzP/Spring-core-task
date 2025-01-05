@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AppConfig.class)
-class TrainingIT {
+class TrainingServiceIT {
 
     @Autowired
     private TrainingServiceImpl trainingService;
@@ -30,7 +30,7 @@ class TrainingIT {
     private TrainingDto trainingDto;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         trainingDto = new TrainingDto();
         trainingDto.setId(4L);
         trainingDto.setTrainingName("Yoga Training");
@@ -38,7 +38,7 @@ class TrainingIT {
     }
 
     @AfterEach
-    public void clear() {
+    void clear() {
         trainingStorage.remove(4L);
     }
 
@@ -59,7 +59,8 @@ class TrainingIT {
     void createTraining_entityAlreadyExists() {
         trainingService.create(trainingDto);
 
-        assertThrows(EntityAlreadyExistsException.class, () -> trainingService.create(trainingDto));
+        assertThrows(EntityAlreadyExistsException.class, () -> trainingService.create(trainingDto),
+                "Training with id 4 already exists");
     }
 
     @Test
@@ -79,6 +80,7 @@ class TrainingIT {
 
     @Test
     void selectTraining_notFound() {
-        assertThrows(EntityNotFoundException.class, () -> trainingService.select(5L));
+        assertThrows(EntityNotFoundException.class, () -> trainingService.select(5L),
+                "Training with id 5 wasn't found");
     }
 }

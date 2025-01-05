@@ -23,55 +23,55 @@ public class TrainingServiceImpl implements TrainingService {
     private final JsonStorageParser<Long, TrainingDto> parser;
     private final TrainingRepository trainingRepository;
     private final TrainingMapper trainingMapper;
-
-    @Value("${data.file.trainings}")
-    private String trainingsFilePath;
+    private final String trainingsFilePath;
 
     @Autowired
-    public TrainingServiceImpl(JsonStorageParser<Long, TrainingDto> parser, TrainingRepository trainingRepository, TrainingMapper trainingMapper) {
+    public TrainingServiceImpl(JsonStorageParser<Long, TrainingDto> parser, TrainingRepository trainingRepository,
+                               TrainingMapper trainingMapper, @Value("${data.file.trainings}") String trainingsFilePath) {
         this.parser = parser;
         this.trainingRepository = trainingRepository;
         this.trainingMapper = trainingMapper;
+        this.trainingsFilePath = trainingsFilePath;
     }
 
     @PostConstruct
     private void initialize() {
-        log.info("Initializing Training Service: Loading trainings from file {}", trainingsFilePath);
+        LOGGER.info("Initializing Training Service: Loading trainings from file {}", trainingsFilePath);
         Map<Long, TrainingDto> trainings = parser.parseJsonToMap(trainingsFilePath, TrainingDto.class);
-        log.info("Loaded {} trainings from file {}", trainings.size(), trainingsFilePath);
+        LOGGER.info("Loaded {} trainings from file {}", trainings.size(), trainingsFilePath);
 
         for (TrainingDto trainingDto : trainings.values()) {
             trainingRepository.save(trainingMapper.convertToEntity(trainingDto));
-            log.info("Training with ID {} initialized and saved", trainingDto.getId());
+            LOGGER.info("Training with ID {} initialized and saved", trainingDto.getId());
         }
     }
 
     @Override
     public TrainingDto create(TrainingDto trainingDto) {
         if (trainingDto == null) {
-            log.debug("Attempted to create training with null input.");
+            LOGGER.debug("Attempted to create training with null input.");
             throw new NullEntityReferenceException("Training cannot be null");
         }
-        log.info("Attempting to create Training with ID {}", trainingDto.getId());
+        LOGGER.info("Attempting to create Training with ID {}", trainingDto.getId());
 
         if (trainingRepository.findById(trainingDto.getId()).isPresent()) {
-            log.warn("Training with ID {} already exists", trainingDto.getId());
+            LOGGER.warn("Training with ID {} already exists", trainingDto.getId());
             throw new EntityAlreadyExistsException("Training with id " + trainingDto.getId() + " already exists");
         }
 
         TrainingDto savedTrainingDto = trainingMapper.convertToDto(trainingRepository.save(trainingMapper.convertToEntity(trainingDto)));
-        log.info("Created new Training with ID {}", savedTrainingDto.getId());
+        LOGGER.info("Created new Training with ID {}", savedTrainingDto.getId());
 
         return savedTrainingDto;
     }
 
     @Override
     public TrainingDto select(Long id) {
-        log.info("Selecting Training with ID {}", id);
+        LOGGER.info("Selecting Training with ID {}", id);
         TrainingDto trainingDto = trainingMapper.convertToDto(trainingRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Training with id " + id + " wasn't found")
         ));
-        log.info("Training with ID {} found", id);
+        LOGGER.info("Training with ID {} found", id);
         return trainingDto;
     }
 }

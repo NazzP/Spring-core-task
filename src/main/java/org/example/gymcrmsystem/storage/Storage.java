@@ -1,13 +1,10 @@
 package org.example.gymcrmsystem.storage;
 
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
 public class Storage<T> {
 
     private final Map<Long, T> storageMap;

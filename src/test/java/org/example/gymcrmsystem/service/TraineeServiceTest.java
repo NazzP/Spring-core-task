@@ -1,6 +1,7 @@
 package org.example.gymcrmsystem.service;
 
 import org.example.gymcrmsystem.exception.EntityAlreadyExistsException;
+import org.example.gymcrmsystem.mapper.TraineeMapperImpl;
 import org.example.gymcrmsystem.repository.TraineeRepository;
 import org.example.gymcrmsystem.dto.TraineeDto;
 import org.example.gymcrmsystem.exception.NullEntityReferenceException;
@@ -8,6 +9,7 @@ import org.example.gymcrmsystem.exception.EntityNotFoundException;
 import org.example.gymcrmsystem.mapper.TraineeMapper;
 import org.example.gymcrmsystem.model.Trainee;
 import org.example.gymcrmsystem.service.impl.TraineeServiceImpl;
+import org.example.gymcrmsystem.utils.PasswordGenerator;
 import org.example.gymcrmsystem.utils.UsernameGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +22,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class TraineeServiceTest {
@@ -32,11 +40,14 @@ class TraineeServiceTest {
     @Mock
     private UsernameGenerator usernameGenerator;
 
+    @Mock
+    private PasswordGenerator passwordGenerator;
+
     @InjectMocks
     private TraineeServiceImpl traineeService;
 
     @Spy
-    private TraineeMapper traineeMapper;
+    private TraineeMapper traineeMapper = new TraineeMapperImpl();
 
     private Trainee sampleTrainee;
     private TraineeDto sampleTraineeDto;
@@ -47,7 +58,6 @@ class TraineeServiceTest {
                 .id(1L)
                 .firstName("FirstName")
                 .lastName("LastName")
-                .password("password")
                 .isActive(true)
                 .dateOfBirth(new Date())
                 .address("123 Main St")
@@ -59,11 +69,13 @@ class TraineeServiceTest {
     @Test
     void createTraineeSuccess() {
         when(usernameGenerator.generateUniqueUsername(any(TraineeDto.class))).thenReturn("FirstName.LastName");
+        when(passwordGenerator.generateRandomPassword()).thenReturn("xlmdaksl4i");
 
         Trainee traineeToSave = new Trainee();
         traineeToSave.setFirstName("FirstName");
         traineeToSave.setLastName("LastName");
         traineeToSave.setUsername("FirstName.LastName");
+        traineeToSave.setPassword("xlmdaksl4i");
 
         when(traineeRepository.save(any(Trainee.class))).thenReturn(traineeToSave);
 
@@ -72,6 +84,7 @@ class TraineeServiceTest {
         assertNotNull(createdTrainee);
         assertEquals("FirstName", createdTrainee.getFirstName());
         assertEquals("FirstName.LastName", createdTrainee.getUsername());
+        assertEquals("xlmdaksl4i", createdTrainee.getPassword());
 
         verify(usernameGenerator, times(1)).generateUniqueUsername(any(TraineeDto.class));
         verify(traineeRepository, times(1)).save(any(Trainee.class));

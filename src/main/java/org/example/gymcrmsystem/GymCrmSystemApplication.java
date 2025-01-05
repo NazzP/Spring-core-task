@@ -15,7 +15,7 @@ public class GymCrmSystemApplication {
             tomcat.start();
             tomcat.getServer().await();
         } catch (LifecycleException e) {
-            log.error("Error occurred while starting Tomcat server", e);
+            LOGGER.error("Error occurred while starting Tomcat server", e);
         }
     }
 }

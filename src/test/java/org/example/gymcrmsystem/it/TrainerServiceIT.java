@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AppConfig.class)
-class TrainerIT {
+class TrainerServiceIT {
 
     @Autowired
     private TrainerServiceImpl trainerService;
@@ -31,7 +31,7 @@ class TrainerIT {
     private TrainerDto trainerDto;
 
     @BeforeEach
-    public void setup() {
+     void setup() {
         TrainingType trainingType = new TrainingType();
         trainingType.setId(1L);
         trainingType.setTrainingTypeName("Yoga");
@@ -44,7 +44,7 @@ class TrainerIT {
     }
 
     @AfterEach
-    public void clear() {
+    void clear() {
         trainerStorage.remove(1L);
     }
 
@@ -66,7 +66,8 @@ class TrainerIT {
     void createTrainer_entityAlreadyExists() {
         trainerService.create(trainerDto);
 
-        assertThrows(EntityAlreadyExistsException.class, () -> trainerService.create(trainerDto));
+        assertThrows(EntityAlreadyExistsException.class, () -> trainerService.create(trainerDto),
+                "Trainer with id 1 already exists");
     }
 
     @Test
@@ -87,7 +88,8 @@ class TrainerIT {
 
     @Test
     void selectTrainer_notFound() {
-        assertThrows(EntityNotFoundException.class, () -> trainerService.select(1L));
+        assertThrows(EntityNotFoundException.class, () -> trainerService.select(1L),
+                "Trainer with id 1 wasn't found");
     }
 
     @Test
@@ -131,6 +133,7 @@ class TrainerIT {
 
         updatedDto.setSpecialization(pilatesType);
 
-        assertThrows(EntityNotFoundException.class, () -> trainerService.update(1L, updatedDto));
+        assertThrows(EntityNotFoundException.class, () -> trainerService.update(1L, updatedDto),
+                "Trainer with id 1 wasn't found");
     }
 }

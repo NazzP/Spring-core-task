@@ -36,11 +36,11 @@ public class UsernameGenerator {
         repositoryRegistry = new HashMap<>();
         repositoryRegistry.put(TrainerDto.class, trainerRepository);
         repositoryRegistry.put(TraineeDto.class, traineeRepository);
-        log.info("UsernameGenerator initialized with repositories: TrainerRepository and TraineeRepository");
+        LOGGER.info("UsernameGenerator initialized with repositories: TrainerRepository and TraineeRepository");
     }
 
     public <T> String generateUniqueUsername(T entity) {
-        log.debug("Generating unique username for entity: {}", entity);
+        LOGGER.debug("Generating unique username for entity: {}", entity);
 
         String firstName = extractFirstName(entity);
         String lastName = extractLastName(entity);
@@ -49,55 +49,55 @@ public class UsernameGenerator {
         String username = baseUsername;
         int suffix = 1;
 
-        log.debug("Base username generated: {}", baseUsername);
+        LOGGER.debug("Base username generated: {}", baseUsername);
 
         boolean exists = checkIfUsernameExists(username);
-        log.debug("Username '{}' existence check: {}", username, exists);
+        LOGGER.debug("Username '{}' existence check: {}", username, exists);
 
         while (exists) {
             username = baseUsername + suffix;
-            log.debug("Username '{}' already exists, trying '{}'", baseUsername, username);
+            LOGGER.debug("Username '{}' already exists, trying '{}'", baseUsername, username);
             suffix++;
             exists = checkIfUsernameExists(username);
         }
 
-        log.info("Generated unique username: {}", username);
+        LOGGER.info("Generated unique username: {}", username);
         return username;
     }
 
     private <T> String extractFirstName(T entity) {
         if (entity instanceof TrainerDto trainerDto) {
-            log.debug("Extracting first name for TrainerDto: {}", trainerDto.getFirstName());
+            LOGGER.debug("Extracting first name for TrainerDto: {}", trainerDto.getFirstName());
             return trainerDto.getFirstName();
         } else if (entity instanceof TraineeDto traineeDto) {
-            log.debug("Extracting first name for TraineeDto: {}", traineeDto.getFirstName());
+            LOGGER.debug("Extracting first name for TraineeDto: {}", traineeDto.getFirstName());
             return traineeDto.getFirstName();
         }
-        log.warn("Unsupported entity type for first name extraction: {}", entity.getClass());
+        LOGGER.warn("Unsupported entity type for first name extraction: {}", entity.getClass());
         throw new IllegalArgumentException("Unsupported entity type");
     }
 
     private <T> String extractLastName(T entity) {
         if (entity instanceof TrainerDto trainerDto) {
-            log.debug("Extracting last name for TrainerDto: {}", trainerDto.getLastName());
+            LOGGER.debug("Extracting last name for TrainerDto: {}", trainerDto.getLastName());
             return trainerDto.getLastName();
         } else if (entity instanceof TraineeDto traineeDto) {
-            log.debug("Extracting last name for TraineeDto: {}", traineeDto.getLastName());
+            LOGGER.debug("Extracting last name for TraineeDto: {}", traineeDto.getLastName());
             return traineeDto.getLastName();
         }
-        log.warn("Unsupported entity type for last name extraction: {}", entity.getClass());
+        LOGGER.warn("Unsupported entity type for last name extraction: {}", entity.getClass());
         throw new IllegalArgumentException("Unsupported entity type");
     }
 
     private boolean checkIfUsernameExists(String username) {
-        log.debug("Checking if username '{}' exists in any repository", username);
+        LOGGER.debug("Checking if username '{}' exists in any repository", username);
         for (UserRepository repository : repositoryRegistry.values()) {
             if (repository.existsByUsername(username)) {
-                log.debug("Username '{}' exists in repository: {}", username, repository.getClass().getSimpleName());
+                LOGGER.debug("Username '{}' exists in repository: {}", username, repository.getClass().getSimpleName());
                 return true;
             }
         }
-        log.debug("Username '{}' does not exist in any repository", username);
+        LOGGER.debug("Username '{}' does not exist in any repository", username);
         return false;
     }
 }

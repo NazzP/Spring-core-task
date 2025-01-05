@@ -1,6 +1,9 @@
 package org.example.gymcrmsystem.dto;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.example.gymcrmsystem.model.TrainingType;
 import org.example.gymcrmsystem.parser.Identifiable;
 

@@ -28,7 +28,7 @@ public class TomcatConfig {
         tomcat.getService().addConnector(connector);
         tomcat.setConnector(connector);
 
-        log.info("Configuring Tomcat to run on port {}", port);
+        LOGGER.info("Configuring Tomcat to run on port {}", port);
 
         try {
             AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
@@ -41,17 +41,17 @@ public class TomcatConfig {
             Tomcat.addServlet(tomcatContext, servletName, dispatcherServlet);
 
             tomcatContext.addServletMappingDecoded("/*", servletName);
-            log.info("Mapped servlet '{}' to /*", servletName);
+            LOGGER.info("Mapped servlet '{}' to /*", servletName);
 
             tomcat.getServer().addLifecycleListener(event -> {
                 if (Lifecycle.START_EVENT.equals(event.getType())) {
-                    log.info("Tomcat server started successfully!");
+                    LOGGER.info("Tomcat server started successfully!");
                 } else if (Lifecycle.STOP_EVENT.equals(event.getType())) {
-                    log.info("Tomcat server stopped.");
+                    LOGGER.info("Tomcat server stopped.");
                 }
             });
         } catch (Exception e) {
-            log.error("Error during Tomcat setup: {}", e.getMessage(), e);
+            LOGGER.error("Error during Tomcat setup: {}", e.getMessage(), e);
         }
         return tomcat;
     }

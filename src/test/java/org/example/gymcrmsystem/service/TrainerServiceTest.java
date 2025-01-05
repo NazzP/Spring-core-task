@@ -1,6 +1,7 @@
 package org.example.gymcrmsystem.service;
 
 import org.example.gymcrmsystem.exception.EntityAlreadyExistsException;
+import org.example.gymcrmsystem.mapper.TrainerMapperImpl;
 import org.example.gymcrmsystem.repository.TrainerRepository;
 import org.example.gymcrmsystem.dto.TrainerDto;
 import org.example.gymcrmsystem.exception.NullEntityReferenceException;
@@ -9,6 +10,7 @@ import org.example.gymcrmsystem.mapper.TrainerMapper;
 import org.example.gymcrmsystem.model.Trainer;
 import org.example.gymcrmsystem.model.TrainingType;
 import org.example.gymcrmsystem.service.impl.TrainerServiceImpl;
+import org.example.gymcrmsystem.utils.PasswordGenerator;
 import org.example.gymcrmsystem.utils.UsernameGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,9 +22,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class TrainerServiceTest {
@@ -33,11 +41,14 @@ class TrainerServiceTest {
     @Mock
     private UsernameGenerator usernameGenerator;
 
+    @Mock
+    private PasswordGenerator passwordGenerator;
+
     @InjectMocks
     private TrainerServiceImpl trainerService;
 
     @Spy
-    private TrainerMapper trainerMapper;
+    private TrainerMapper trainerMapper = new TrainerMapperImpl();
 
     private Trainer sampleTrainer;
     private TrainerDto sampleTrainerDto;
@@ -48,7 +59,6 @@ class TrainerServiceTest {
                 .id(1L)
                 .firstName("Firstname")
                 .lastName("LastName")
-                .password("password")
                 .isActive(true)
                 .specialization(TrainingType.builder().id(1L).trainingTypeName("Yoga").build())
                 .build();
@@ -59,11 +69,13 @@ class TrainerServiceTest {
     @Test
     void createTrainerSuccess() {
         when(usernameGenerator.generateUniqueUsername(any(TrainerDto.class))).thenReturn("FirstName.LastName");
+        when(passwordGenerator.generateRandomPassword()).thenReturn("xlmdaksl4i");
 
         Trainer trainerToSave = new Trainer();
         trainerToSave.setFirstName("FirstName");
         trainerToSave.setLastName("LastName");
         trainerToSave.setUsername("FirstName.LastName");
+        trainerToSave.setPassword("xlmdaksl4i");
         trainerToSave.setSpecialization(TrainingType.builder().trainingTypeName("Yoga").build());
 
         when(trainerRepository.save(any(Trainer.class))).thenReturn(trainerToSave);
@@ -73,6 +85,7 @@ class TrainerServiceTest {
         assertNotNull(createdTrainer);
         assertEquals("FirstName", createdTrainer.getFirstName());
         assertEquals("FirstName.LastName", createdTrainer.getUsername());
+        assertEquals("xlmdaksl4i", createdTrainer.getPassword());
         assertEquals("Yoga", createdTrainer.getSpecialization().getTrainingTypeName());
 
         verify(usernameGenerator, times(1)).generateUniqueUsername(any(TrainerDto.class));
