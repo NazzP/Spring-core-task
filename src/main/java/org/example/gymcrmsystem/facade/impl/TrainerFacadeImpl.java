@@ -6,6 +6,8 @@ import org.example.gymcrmsystem.facade.TrainerFacade;
 import org.example.gymcrmsystem.service.TrainerService;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class TrainerFacadeImpl implements TrainerFacade {
@@ -18,12 +20,37 @@ public class TrainerFacadeImpl implements TrainerFacade {
     }
 
     @Override
-    public TrainerDto getTrainerById(Long id) {
-        return trainerService.select(id);
+    public TrainerDto getTrainerByUsername(String username) {
+        return trainerService.select(username);
     }
 
     @Override
-    public TrainerDto updateTrainer(Long id, TrainerDto trainerDto) {
-        return trainerService.update(id, trainerDto);
+    public TrainerDto updateTrainer(String username, TrainerDto trainerDto) {
+        return trainerService.update(username, trainerDto);
+    }
+
+    @Override
+    public boolean authenticateTrainer(String username, String password) {
+        return trainerService.authenticateTrainer(username, password);
+    }
+
+    @Override
+    public void changeTrainerStatus(String username, Boolean isActive) {
+        trainerService.changeStatus(username, isActive);
+    }
+
+    @Override
+    public void changeTrainerPassword(String username, String lastPassword, String newPassword) {
+        trainerService.changePassword(username, lastPassword, newPassword);
+    }
+
+    @Override
+    public List<TrainerDto> getUnassignedTrainers(String traineeUsername) {
+        return trainerService.getUnassignedTrainersList(traineeUsername);
+    }
+
+    @Override
+    public List<TrainerDto> updateTrainersList(String traineeUsername, List<String> trainersUsernames) {
+        return trainerService.updateTrainersList(traineeUsername, trainersUsernames);
     }
 }

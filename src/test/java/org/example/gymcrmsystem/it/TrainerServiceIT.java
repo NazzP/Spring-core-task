@@ -1,139 +1,197 @@
 package org.example.gymcrmsystem.it;
 
+import jakarta.transaction.Transactional;
 import org.example.gymcrmsystem.config.AppConfig;
 import org.example.gymcrmsystem.dto.TrainerDto;
-import org.example.gymcrmsystem.exception.EntityAlreadyExistsException;
+import org.example.gymcrmsystem.dto.TrainingTypeDto;
+import org.example.gymcrmsystem.dto.UserDto;
+import org.example.gymcrmsystem.entity.Trainer;
 import org.example.gymcrmsystem.exception.EntityNotFoundException;
-import org.example.gymcrmsystem.model.Trainer;
-import org.example.gymcrmsystem.model.TrainingType;
-import org.example.gymcrmsystem.service.impl.TrainerServiceImpl;
-import org.example.gymcrmsystem.storage.Storage;
-import org.junit.jupiter.api.AfterEach;
+import org.example.gymcrmsystem.repository.TrainerRepository;
+import org.example.gymcrmsystem.service.TrainerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Testcontainers
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AppConfig.class)
+@Transactional
+@ActiveProfiles("prod")
 class TrainerServiceIT {
 
     @Autowired
-    private TrainerServiceImpl trainerService;
+    private TrainerService trainerService;
 
     @Autowired
-    private Storage<Trainer> trainerStorage;
+    private TrainerRepository trainerRepository;
 
     private TrainerDto trainerDto;
 
-    @BeforeEach
-     void setup() {
-        TrainingType trainingType = new TrainingType();
-        trainingType.setId(1L);
-        trainingType.setTrainingTypeName("Yoga");
+    @Container
+    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
 
-        trainerDto = new TrainerDto();
-        trainerDto.setId(1L);
-        trainerDto.setFirstName("FirstName");
-        trainerDto.setLastName("LastName");
-        trainerDto.setSpecialization(trainingType);
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("datasource.url", postgres::getJdbcUrl);
+        registry.add("datasource.username", postgres::getUsername);
+        registry.add("datasource.password", postgres::getPassword);
+        registry.add("hibernate.dialect", () -> "org.hibernate.dialect.PostgreSQL10Dialect");
+        registry.add("hibernate.hbm2ddl.auto", () -> "create");
+        registry.add("hibernate.show_sql", () -> true);
+        registry.add("hibernate.format_sql", () -> true);
+        registry.add("hibernate.jdbc.lob.non_contextual_creation", () -> true);
     }
 
-    @AfterEach
-    void clear() {
-        trainerStorage.remove(1L);
+    @BeforeEach
+    void setup() {
+        trainerDto = TrainerDto.builder()
+                .user(UserDto.builder()
+                        .firstName("FirstName")
+                        .lastName("LastName")
+                        .isActive(true)
+                        .build())
+                .specialization(TrainingTypeDto.builder()
+                        .trainingTypeName("Yoga")
+                        .build())
+                .build();
     }
 
     @Test
-    void createTrainer_success() {
+    void createTrainerSuccess() {
         TrainerDto result = trainerService.create(trainerDto);
 
         assertNotNull(result);
-        assertEquals("FirstName", result.getFirstName());
-        assertEquals("LastName", result.getLastName());
+        assertEquals("FirstName", result.getUser().getFirstName());
+        assertEquals("LastName", result.getUser().getLastName());
         assertEquals("Yoga", result.getSpecialization().getTrainingTypeName());
 
-        Trainer savedTrainer = trainerStorage.get(1L);
+        Trainer savedTrainer = trainerRepository.findByUsername(result.getUser().getUsername()).orElse(null);
         assertNotNull(savedTrainer);
-        assertEquals("FirstName", savedTrainer.getFirstName());
+        assertEquals(savedTrainer.getUser().getFirstName(), result.getUser().getFirstName());
+        assertEquals(savedTrainer.getSpecialization().getTrainingTypeName(), result.getSpecialization().getTrainingTypeName());
     }
 
     @Test
-    void createTrainer_entityAlreadyExists() {
-        trainerService.create(trainerDto);
+    void selectTrainerSuccess() {
+        TrainerDto result = trainerService.create(trainerDto);
+        TrainerDto savedTrainerDto = trainerService.select(result.getUser().getUsername());
 
-        assertThrows(EntityAlreadyExistsException.class, () -> trainerService.create(trainerDto),
-                "Trainer with id 1 already exists");
-    }
-
-    @Test
-    void selectTrainer_success() {
-        trainerService.create(trainerDto);
-
-        TrainerDto result = trainerService.select(1L);
-
-        assertNotNull(result);
-        assertEquals("FirstName", result.getFirstName());
-        assertEquals("LastName", result.getLastName());
-        assertEquals("Yoga", result.getSpecialization().getTrainingTypeName());
-
-        Trainer retrievedTrainer = trainerStorage.get(1L);
-        assertNotNull(retrievedTrainer);
-        assertEquals("FirstName", retrievedTrainer.getFirstName());
+        assertNotNull(savedTrainerDto);
+        assertEquals(savedTrainerDto.getUser().getFirstName(), result.getUser().getFirstName());
+        assertEquals(savedTrainerDto.getSpecialization().getTrainingTypeName(), result.getSpecialization().getTrainingTypeName());
     }
 
     @Test
     void selectTrainer_notFound() {
-        assertThrows(EntityNotFoundException.class, () -> trainerService.select(1L),
-                "Trainer with id 1 wasn't found");
+        String username = "nonexistent";
+        assertThrows(EntityNotFoundException.class, () -> trainerService.select(username),
+                "Trainer with username " + username + " wasn't found");
     }
 
     @Test
-    void updateTrainer_success() {
-        trainerService.create(trainerDto);
+    void updateTrainerSuccess() {
+        TrainerDto result = trainerService.create(trainerDto);
 
-        TrainerDto updatedDto = new TrainerDto();
-        updatedDto.setFirstName("Updated");
-        updatedDto.setLastName("UserName");
-        updatedDto.setId(1L);
+        TrainerDto updatedTrainerDto = TrainerDto.builder()
+                .user(UserDto.builder()
+                        .firstName("upd_FirstName")
+                        .lastName("upd_LastName")
+                        .username(result.getUser().getUsername())
+                        .build())
+                .specialization(TrainingTypeDto.builder()
+                        .trainingTypeName("Yoga")
+                        .build())
+                .build();
 
-        TrainingType pilatesType = new TrainingType();
-        pilatesType.setId(2L);
-        pilatesType.setTrainingTypeName("Pilates");
-
-        updatedDto.setSpecialization(pilatesType);
-
-        TrainerDto updatedResult = trainerService.update(1L, updatedDto);
+        TrainerDto updatedResult = trainerService.update(result.getUser().getUsername(), updatedTrainerDto);
 
         assertNotNull(updatedResult);
-        assertEquals("Updated", updatedResult.getFirstName());
-        assertEquals("UserName", updatedResult.getLastName());
-        assertEquals("Pilates", updatedResult.getSpecialization().getTrainingTypeName());
-
-        Trainer updatedTrainer = trainerStorage.get(1L);
-        assertNotNull(updatedTrainer);
-        assertEquals("Updated", updatedTrainer.getFirstName());
-        assertEquals("UserName", updatedTrainer.getLastName());
-        assertEquals("Pilates", updatedTrainer.getSpecialization().getTrainingTypeName());
+        assertEquals("upd_FirstName", updatedResult.getUser().getFirstName());
+        assertEquals("Yoga", updatedResult.getSpecialization().getTrainingTypeName());
     }
 
     @Test
     void updateTrainer_notFound() {
-        TrainerDto updatedDto = new TrainerDto();
-        updatedDto.setFirstName("Updated");
-        updatedDto.setLastName("UserName");
+        TrainerDto updatedTrainerDto = TrainerDto.builder()
+                .user(UserDto.builder()
+                        .firstName("upd_FirstName")
+                        .lastName("upd_LastName")
+                        .build())
+                .specialization(TrainingTypeDto.builder()
+                        .trainingTypeName("Yoga")
+                        .build())
+                .build();
 
-        TrainingType pilatesType = new TrainingType();
-        pilatesType.setId(2L);
-        pilatesType.setTrainingTypeName("Pilates");
+        assertThrows(EntityNotFoundException.class, () -> trainerService.update("nonexistent", updatedTrainerDto),
+                "Trainer with username nonexistent wasn't found");
+    }
 
-        updatedDto.setSpecialization(pilatesType);
+    @Test
+    void authenticateTrainerSuccess() {
+        TrainerDto result = trainerService.create(trainerDto);
 
-        assertThrows(EntityNotFoundException.class, () -> trainerService.update(1L, updatedDto),
-                "Trainer with id 1 wasn't found");
+        String username = result.getUser().getUsername();
+        String password = trainerService.forgotPassword(username);
+
+        boolean isAuthenticated = trainerService.authenticateTrainer(username, password);
+        assertTrue(isAuthenticated);
+    }
+
+    @Test
+    void authenticateTrainer_notFound() {
+        String username = "nonexistent";
+        String password = "password";
+        assertThrows(EntityNotFoundException.class, () -> trainerService.authenticateTrainer(username, password),
+                "Trainer with username " + username + " wasn't found");
+    }
+
+    @Test
+    void changeTrainerStatusSuccess() {
+        TrainerDto result = trainerService.create(trainerDto);
+        String username = result.getUser().getUsername();
+
+        trainerService.changeStatus(username, false);
+
+        TrainerDto updatedTrainer = trainerService.select(username);
+        assertFalse(updatedTrainer.getUser().getIsActive());
+    }
+
+    @Test
+    void changeTrainerPasswordSuccess() {
+        TrainerDto result = trainerService.create(trainerDto);
+
+        String username = result.getUser().getUsername();
+        String password = trainerService.forgotPassword(username);
+        String newPassword = "newPass";
+
+        trainerDto.getUser().setUsername(username);
+        trainerDto.getUser().setPassword(password);
+
+        trainerService.update(username, trainerDto);
+
+        trainerService.changePassword(username, password, newPassword);
+
+        boolean isAuthenticated = trainerService.authenticateTrainer(username, newPassword);
+        assertTrue(isAuthenticated);
+    }
+
+    @Test
+    void changePasswordIncorrectOldPassword() {
+        TrainerDto result = trainerService.create(trainerDto);
+        String username = result.getUser().getUsername();
+
+        assertThrows(IllegalArgumentException.class, () -> trainerService.changePassword(username, "wrongPassword", "newPassword"),
+                "Wrong password");
     }
 }
+

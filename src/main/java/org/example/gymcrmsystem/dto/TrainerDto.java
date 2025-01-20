@@ -1,12 +1,11 @@
 package org.example.gymcrmsystem.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.ToString;
-import org.example.gymcrmsystem.model.TrainingType;
-import org.example.gymcrmsystem.parser.Identifiable;
 
 import java.io.Serializable;
 
@@ -14,15 +13,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TrainerDto implements Serializable, Identifiable<Long> {
-    private Long id;
-    @ToString.Exclude
-    private String firstName;
-    @ToString.Exclude
-    private String lastName;
-    private String username;
-    @ToString.Exclude
-    private String password;
-    private Boolean isActive;
-    private TrainingType specialization;
+public class TrainerDto implements Serializable {
+
+    @NotNull(message = "User cannot be null")
+    private UserDto user;
+
+    @NotNull(message = "specialization is required")
+    private TrainingTypeDto specialization;
 }

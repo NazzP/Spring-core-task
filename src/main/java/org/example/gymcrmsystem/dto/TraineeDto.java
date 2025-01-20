@@ -1,31 +1,29 @@
 package org.example.gymcrmsystem.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.ToString;
-import org.example.gymcrmsystem.parser.Identifiable;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TraineeDto implements Serializable, Identifiable<Long> {
-    private Long id;
+public class TraineeDto implements Serializable {
+
+    @NotNull(message = "User is required")
+    private UserDto user;
+
+    @Past(message = "Date of birth should be in the past")
     @ToString.Exclude
-    private String firstName;
-    @ToString.Exclude
-    private String lastName;
-    private String username;
-    @ToString.Exclude
-    private String password;
-    private Boolean isActive;
-    @ToString.Exclude
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
+
     @ToString.Exclude
     private String address;
 }
