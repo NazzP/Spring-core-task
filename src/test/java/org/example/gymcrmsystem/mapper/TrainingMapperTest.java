@@ -1,49 +1,75 @@
 package org.example.gymcrmsystem.mapper;
 
-import org.example.gymcrmsystem.model.Training;
-import org.example.gymcrmsystem.dto.TrainingDto;
-import org.example.gymcrmsystem.model.TrainingType;
-import org.junit.jupiter.api.BeforeEach;
+import org.example.gymcrmsystem.config.AppConfig;
+import org.example.gymcrmsystem.config.JpaTestConfig;
+import org.example.gymcrmsystem.config.TestAppConfig;
+import org.example.gymcrmsystem.dto.*;
+import org.example.gymcrmsystem.entity.*;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Date;
+import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = TestAppConfig.class)
+@ActiveProfiles("test")
 class TrainingMapperTest {
 
+    @Autowired
     private TrainingMapper trainingMapper;
-
-    @BeforeEach
-    public void setUp() {
-        trainingMapper = Mappers.getMapper(TrainingMapper.class);
-    }
 
     @Test
     void convertToDto() {
+
         Training training = Training.builder()
-                .id(1L)
-                .traineeId(100L)
-                .trainerId(200L)
-                .trainingName("Yoga Session")
-                .trainingType(TrainingType.builder().id(1L).trainingTypeName("Yoga").build())
-                .date(new Date())
+                .trainee(Trainee.builder()
+                        .user(User.builder()
+                                .firstName("FirstName")
+                                .lastName("LastName")
+                                .username("FirstName.LastName")
+                                .password("password")
+                                .isActive(true).build())
+                        .dateOfBirth(LocalDate.of(2020, 1, 1))
+                        .address("123 Main St")
+                        .build())
+                .trainer(Trainer.builder()
+                        .user(User.builder()
+                                .firstName("FirstName")
+                                .lastName("LastName")
+                                .username("FirstName.LastName")
+                                .password("password")
+                                .isActive(true)
+                                .build())
+                        .specialization(TrainingType.builder().id(1L).trainingTypeName("Yoga").build())
+                        .build())
+                .trainingType(TrainingType.builder()
+                        .trainingTypeName("Yoga")
+                        .build())
+                .trainingName("TrainingName")
+                .date(LocalDate.of(2020, 1, 1))
                 .duration(60)
                 .build();
 
         TrainingDto trainingDto = trainingMapper.convertToDto(training);
 
-        assertNotNull(trainingDto);
-        assertEquals(training.getId(), trainingDto.getId());
-        assertEquals(training.getTraineeId(), trainingDto.getTraineeId());
-        assertEquals(training.getTrainerId(), trainingDto.getTrainerId());
-        assertEquals(training.getTrainingName(), trainingDto.getTrainingName());
-        assertEquals(training.getTrainingType(), trainingDto.getTrainingType());
-        assertEquals(training.getDate(), trainingDto.getDate());
-        assertEquals(training.getDuration(), trainingDto.getDuration());
+        assertAll("trainingDto",
+                () -> assertNotNull(trainingDto),
+                () -> assertEquals(training.getTrainee().getUser().getFirstName(), trainingDto.getTrainee().getUser().getFirstName()),
+                () -> assertEquals(training.getTrainee().getAddress(), trainingDto.getTrainee().getAddress()),
+                () -> assertEquals(training.getTrainer().getUser().getFirstName(), trainingDto.getTrainer().getUser().getFirstName()),
+                () -> assertEquals(training.getTrainer().getSpecialization().getTrainingTypeName(), trainingDto.getTrainer().getSpecialization().getTrainingTypeName()),
+                () -> assertEquals(training.getTrainingType().getTrainingTypeName(), trainingDto.getTrainingType().getTrainingTypeName()),
+                () -> assertEquals(training.getTrainingName(), trainingDto.getTrainingName()),
+                () -> assertEquals(training.getDate(), trainingDto.getDate()),
+                () -> assertEquals(training.getDuration(), trainingDto.getDuration())
+        );
     }
 
     @Test
@@ -55,25 +81,48 @@ class TrainingMapperTest {
     @Test
     void convertToEntity() {
         TrainingDto trainingDto = TrainingDto.builder()
-                .id(1L)
-                .traineeId(100L)
-                .trainerId(200L)
-                .trainingName("Yoga Session")
-                .trainingType(TrainingType.builder().id(1L).trainingTypeName("Yoga").build())
-                .date(new Date())
+                .trainee(TraineeDto.builder()
+                        .user(UserDto.builder()
+                                .firstName("FirstName")
+                                .lastName("LastName")
+                                .username("FirstName.LastName")
+                                .password("password")
+                                .isActive(true).build())
+                        .dateOfBirth(LocalDate.of(2020, 1, 1))
+                        .address("123 Main St")
+                        .build())
+                .trainer(TrainerDto.builder()
+                        .user(UserDto.builder()
+                                .firstName("FirstName")
+                                .lastName("LastName")
+                                .username("FirstName.LastName")
+                                .password("password")
+                                .isActive(true)
+                                .build())
+                        .specialization(TrainingTypeDto.builder().trainingTypeName("Yoga").build())
+                        .build())
+                .trainingType(TrainingTypeDto.builder()
+                        .trainingTypeName("Yoga")
+                        .build())
+                .trainingName("TrainingName")
+                .date(LocalDate.of(2020, 1, 1))
                 .duration(60)
                 .build();
 
         Training training = trainingMapper.convertToEntity(trainingDto);
 
-        assertNotNull(training);
-        assertEquals(trainingDto.getId(), training.getId());
-        assertEquals(trainingDto.getTraineeId(), training.getTraineeId());
-        assertEquals(trainingDto.getTrainerId(), training.getTrainerId());
-        assertEquals(trainingDto.getTrainingName(), training.getTrainingName());
-        assertEquals(trainingDto.getTrainingType(), training.getTrainingType());
-        assertEquals(trainingDto.getDate(), training.getDate());
-        assertEquals(trainingDto.getDuration(), training.getDuration());
+        assertAll("training",
+                () -> assertNotNull(training),
+                () -> assertEquals(training.getTrainee().getUser().getFirstName(), trainingDto.getTrainee().getUser().getFirstName()),
+                () -> assertEquals(training.getTrainee().getAddress(), trainingDto.getTrainee().getAddress()),
+                () -> assertEquals(training.getTrainer().getUser().getFirstName(), trainingDto.getTrainer().getUser().getFirstName()),
+                () -> assertEquals(training.getTrainer().getSpecialization().getTrainingTypeName(), trainingDto.getTrainer().getSpecialization().getTrainingTypeName()),
+                () -> assertEquals(training.getTrainingType().getTrainingTypeName(), trainingDto.getTrainingType().getTrainingTypeName()),
+                () -> assertEquals(training.getTrainingName(), trainingDto.getTrainingName()),
+                () -> assertEquals(training.getDate(), trainingDto.getDate()),
+                () -> assertEquals(training.getDuration(), trainingDto.getDuration())
+        );
+
     }
 
     @Test

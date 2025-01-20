@@ -1,112 +1,110 @@
 package org.example.gymcrmsystem.utils;
 
-import org.example.gymcrmsystem.dto.TraineeDto;
-import org.example.gymcrmsystem.dto.TrainerDto;
-import org.example.gymcrmsystem.repository.TraineeRepository;
-import org.example.gymcrmsystem.repository.TrainerRepository;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.example.gymcrmsystem.config.AppConfig;
+import org.example.gymcrmsystem.config.JpaTestConfig;
+import org.example.gymcrmsystem.config.TestAppConfig;
+import org.example.gymcrmsystem.dto.UserDto;
+import org.example.gymcrmsystem.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = TestAppConfig.class)
+@ActiveProfiles("test")
 class UsernameGeneratorTest {
 
     @Mock
-    private TrainerRepository trainerRepository;
+    private UserRepository userRepository;
 
-    @Mock
-    private TraineeRepository traineeRepository;
-
+    @InjectMocks
     private UsernameGenerator usernameGenerator;
+
+    private UserDto userDto;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        usernameGenerator = new UsernameGenerator(trainerRepository, traineeRepository);
+        userDto = UserDto.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .isActive(true)
+                .build();
     }
 
     @Test
-    void generateUniqueUsernameForTrainee() {
-        TraineeDto traineeDto = new TraineeDto();
-        traineeDto.setFirstName("FirstName");
-        traineeDto.setLastName("LastName");
+    void testGenerateUniqueUsernameWhenUsernameDoesNotExist() {
+        String expectedUsername = "John.Doe";
+        when(userRepository.existsByUsername(expectedUsername)).thenReturn(false);
 
-        when(traineeRepository.existsByUsername("FirstName.LastName")).thenReturn(false);
-        when(traineeRepository.existsByUsername("FirstName.LastName1")).thenReturn(false);
+        String username = usernameGenerator.generateUniqueUsername(userDto);
 
-        String username = usernameGenerator.generateUniqueUsername(traineeDto);
-
-        assertEquals("FirstName.LastName", username);
+        assertEquals(expectedUsername, username);
+        verify(userRepository, times(1)).existsByUsername(expectedUsername);
     }
 
     @Test
-    void generateUniqueUsernameWithSuffix() {
-        TraineeDto traineeDto = new TraineeDto();
-        traineeDto.setFirstName("FirstName");
-        traineeDto.setLastName("LastName");
+    void testGenerateUniqueUsernameWhenUsernameExistsOnce() {
+        String baseUsername = "John.Doe";
+        String expectedUsername = baseUsername + "1";
+        when(userRepository.existsByUsername(baseUsername)).thenReturn(true);
+        when(userRepository.existsByUsername(expectedUsername)).thenReturn(false);
 
-        when(traineeRepository.existsByUsername("FirstName.LastName")).thenReturn(true);
-        when(traineeRepository.existsByUsername("FirstName.LastName")).thenReturn(false);
+        String username = usernameGenerator.generateUniqueUsername(userDto);
 
-        String username = usernameGenerator.generateUniqueUsername(traineeDto);
-
-        assertEquals("FirstName.LastName", username);
+        assertEquals(expectedUsername, username);
+        verify(userRepository, times(2)).existsByUsername(anyString());
     }
 
     @Test
-    void generateUniqueUsernameForTrainer() {
-        TrainerDto trainerDto = new TrainerDto();
-        trainerDto.setFirstName("Name");
-        trainerDto.setLastName("Surname");
+    void testGenerateUniqueUsernameWhenUsernameExistsMultipleTimes() {
+        String baseUsername = "John.Doe";
+        String username1 = baseUsername + "1";
+        String username2 = baseUsername + "2";
+        String expectedUsername = baseUsername + "3";
 
-        when(trainerRepository.existsByUsername("Name.Surname")).thenReturn(false);
+        when(userRepository.existsByUsername(baseUsername)).thenReturn(true);
+        when(userRepository.existsByUsername(username1)).thenReturn(true);
+        when(userRepository.existsByUsername(username2)).thenReturn(true);
+        when(userRepository.existsByUsername(expectedUsername)).thenReturn(false);
 
-        String username = usernameGenerator.generateUniqueUsername(trainerDto);
+        String username = usernameGenerator.generateUniqueUsername(userDto);
 
-        assertEquals("Name.Surname", username);
+        assertEquals(expectedUsername, username);
+        verify(userRepository, times(4)).existsByUsername(anyString());
     }
 
     @Test
-    void generateUniqueUsernameForTrainerWithSuffix() {
-        TrainerDto trainerDto = new TrainerDto();
-        trainerDto.setFirstName("Name");
-        trainerDto.setLastName("Surname");
+    void testCheckIfUsernameExists() {
+        String username = "John.Doe";
 
-        when(trainerRepository.existsByUsername("Name.Surname")).thenReturn(true);
-        when(trainerRepository.existsByUsername("Name.Surname1")).thenReturn(false);
+        boolean exists = usernameGenerator.checkIfUsernameExists(username);
+        assertFalse(exists);
 
-        String username = usernameGenerator.generateUniqueUsername(trainerDto);
-        assertEquals("Name.Surname1", username);
+        when(userRepository.existsByUsername(username)).thenReturn(true);
+        exists = usernameGenerator.checkIfUsernameExists(username);
+        assertTrue(exists);
+
+        verify(userRepository, times(2)).existsByUsername(username);
     }
 
     @Test
-    void checkIfUsernamesTakesFromAllStorages() {
-        TrainerDto trainerDto = new TrainerDto();
-        trainerDto.setFirstName("Name");
-        trainerDto.setLastName("Surname");
+    void testCheckIfUsernameExistsWhenNotExist() {
+        String username = "John.Doe";
+        when(userRepository.existsByUsername(username)).thenReturn(false);
 
-        TraineeDto traineeDto = new TraineeDto();
-        traineeDto.setFirstName("Name");
-        traineeDto.setLastName("Surname");
+        boolean exists = usernameGenerator.checkIfUsernameExists(username);
 
-        when(trainerRepository.existsByUsername("Name.Surname")).thenReturn(false);
-        when(traineeRepository.existsByUsername("Name.Surname")).thenReturn(true);
-        when(traineeRepository.existsByUsername("Name.Surname1")).thenReturn(false);
-
-        String username = usernameGenerator.generateUniqueUsername(traineeDto);
-        assertEquals("Name.Surname1", username);
+        assertFalse(exists);
+        verify(userRepository, times(1)).existsByUsername(username);
     }
-
-    @Test
-    void generateUniqueUsernameForUnsupportedEntityType() {
-        Object invalidEntity = new Object();
-        assertThrows(IllegalArgumentException.class,
-                () -> usernameGenerator.generateUniqueUsername(invalidEntity),
-                "Expected an IllegalArgumentException for unsupported entity type");
-    }
-
 }
+

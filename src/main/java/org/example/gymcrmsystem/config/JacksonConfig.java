@@ -1,6 +1,7 @@
 package org.example.gymcrmsystem.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -16,6 +17,7 @@ public class JacksonConfig {
     public ObjectMapper objectMapper() {
         return new ObjectMapper()
                 .findAndRegisterModules()
+                .registerModule(new JavaTimeModule())
                 .setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
     }
 

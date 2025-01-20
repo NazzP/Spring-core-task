@@ -1,46 +1,54 @@
 package org.example.gymcrmsystem.mapper;
 
+import org.example.gymcrmsystem.config.JpaTestConfig;
+import org.example.gymcrmsystem.config.TestAppConfig;
 import org.example.gymcrmsystem.dto.TrainerDto;
-import org.example.gymcrmsystem.model.Trainer;
-import org.example.gymcrmsystem.model.TrainingType;
-import org.junit.jupiter.api.BeforeEach;
+import org.example.gymcrmsystem.dto.TrainingTypeDto;
+import org.example.gymcrmsystem.dto.UserDto;
+import org.example.gymcrmsystem.entity.Trainer;
+import org.example.gymcrmsystem.entity.TrainingType;
+import org.example.gymcrmsystem.entity.User;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = TestAppConfig.class)
+@ActiveProfiles("test")
 class TrainerMapperTest {
 
+    @Autowired
     private TrainerMapper trainerMapper;
-
-    @BeforeEach
-    public void setUp() {
-        trainerMapper = Mappers.getMapper(TrainerMapper.class);
-    }
 
     @Test
     void convertToDto() {
         Trainer trainer = Trainer.builder()
-                .id(1L)
-                .firstName("FirstName")
-                .lastName("LastName")
-                .username("FirstName.LastName")
-                .password("password")
-                .isActive(true)
+                .user(User.builder()
+                        .firstName("FirstName")
+                        .lastName("LastName")
+                        .username("FirstName.LastName")
+                        .password("password")
+                        .isActive(true)
+                        .build())
                 .specialization(TrainingType.builder().id(1L).trainingTypeName("Yoga").build())
                 .build();
 
         TrainerDto trainerDto = trainerMapper.convertToDto(trainer);
 
-        assertNotNull(trainerDto);
-        assertEquals(trainer.getId(), trainerDto.getId());
-        assertEquals(trainer.getFirstName(), trainerDto.getFirstName());
-        assertEquals(trainer.getLastName(), trainerDto.getLastName());
-        assertEquals(trainer.getUsername(), trainerDto.getUsername());
-        assertEquals(trainer.getIsActive(), trainerDto.getIsActive());
-        assertEquals(trainer.getSpecialization(), trainerDto.getSpecialization());
+        assertAll("trainerDto",
+                () -> assertNotNull(trainerDto),
+                () -> assertEquals(trainer.getUser().getFirstName(), trainerDto.getUser().getFirstName()),
+                () -> assertEquals(trainer.getUser().getLastName(), trainerDto.getUser().getLastName()),
+                () -> assertEquals(trainer.getUser().getUsername(), trainerDto.getUser().getUsername()),
+                () -> assertEquals(trainer.getUser().getIsActive(), trainerDto.getUser().getIsActive()),
+                () -> assertEquals(trainer.getSpecialization().getTrainingTypeName(), trainerDto.getSpecialization().getTrainingTypeName())
+        );
+
     }
 
     @Test
@@ -52,23 +60,25 @@ class TrainerMapperTest {
     @Test
     void convertToEntity() {
         TrainerDto trainerDto = TrainerDto.builder()
-                .id(1L)
-                .firstName("FirstName")
-                .lastName("LastName")
-                .username("FirstName.LastName")
-                .isActive(true)
-                .specialization(TrainingType.builder().id(1L).trainingTypeName("Yoga").build())
+                .user(UserDto.builder()
+                        .firstName("FirstName")
+                        .lastName("LastName")
+                        .username("FirstName.LastName")
+                        .isActive(true)
+                        .build())
+                .specialization(TrainingTypeDto.builder().trainingTypeName("Yoga").build())
                 .build();
 
         Trainer trainer = trainerMapper.convertToEntity(trainerDto);
 
-        assertNotNull(trainer);
-        assertEquals(trainerDto.getId(), trainer.getId());
-        assertEquals(trainerDto.getFirstName(), trainer.getFirstName());
-        assertEquals(trainerDto.getLastName(), trainer.getLastName());
-        assertEquals(trainerDto.getUsername(), trainer.getUsername());
-        assertEquals(trainerDto.getIsActive(), trainer.getIsActive());
-        assertEquals(trainerDto.getSpecialization(), trainer.getSpecialization());
+        assertAll("trainer",
+                () -> assertNotNull(trainer),
+                () -> assertEquals(trainerDto.getUser().getFirstName(), trainer.getUser().getFirstName()),
+                () -> assertEquals(trainerDto.getUser().getLastName(), trainer.getUser().getLastName()),
+                () -> assertEquals(trainerDto.getUser().getUsername(), trainer.getUser().getUsername()),
+                () -> assertEquals(trainerDto.getUser().getIsActive(), trainer.getUser().getIsActive()),
+                () -> assertEquals(trainerDto.getSpecialization().getTrainingTypeName(), trainer.getSpecialization().getTrainingTypeName())
+        );
     }
 
     @Test

@@ -3,14 +3,10 @@ package org.example.gymcrmsystem.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.example.gymcrmsystem.dto.TraineeDto;
 import org.example.gymcrmsystem.dto.TrainerDto;
-import org.example.gymcrmsystem.model.User;
-import org.example.gymcrmsystem.repository.TraineeRepository;
-import org.example.gymcrmsystem.repository.TrainerRepository;
+import org.example.gymcrmsystem.dto.UserDto;
+import org.example.gymcrmsystem.entity.User;
 import org.example.gymcrmsystem.repository.UserRepository;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This component is responsible for generating unique usernames for classes which extends {@link User} entities.
@@ -30,20 +26,17 @@ import java.util.Map;
 @Component
 public class UsernameGenerator {
 
-    private final Map<Class<?>, UserRepository> repositoryRegistry;
+    private final UserRepository userRepository;
 
-    public UsernameGenerator(TrainerRepository trainerRepository, TraineeRepository traineeRepository) {
-        repositoryRegistry = new HashMap<>();
-        repositoryRegistry.put(TrainerDto.class, trainerRepository);
-        repositoryRegistry.put(TraineeDto.class, traineeRepository);
-        LOGGER.info("UsernameGenerator initialized with repositories: TrainerRepository and TraineeRepository");
+    public UsernameGenerator(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        LOGGER.info("UsernameGenerator initialized with UserRepository");
     }
 
-    public <T> String generateUniqueUsername(T entity) {
-        LOGGER.debug("Generating unique username for entity: {}", entity);
-
-        String firstName = extractFirstName(entity);
-        String lastName = extractLastName(entity);
+    public String generateUniqueUsername(UserDto userDto) {
+        String firstName = userDto.getFirstName();
+        String lastName = userDto.getLastName();
+        LOGGER.debug("Generating unique username for: {} {}", firstName, lastName);
 
         String baseUsername = firstName + "." + lastName;
         String username = baseUsername;
@@ -65,39 +58,9 @@ public class UsernameGenerator {
         return username;
     }
 
-    private <T> String extractFirstName(T entity) {
-        if (entity instanceof TrainerDto trainerDto) {
-            LOGGER.debug("Extracting first name for TrainerDto: {}", trainerDto.getFirstName());
-            return trainerDto.getFirstName();
-        } else if (entity instanceof TraineeDto traineeDto) {
-            LOGGER.debug("Extracting first name for TraineeDto: {}", traineeDto.getFirstName());
-            return traineeDto.getFirstName();
-        }
-        LOGGER.warn("Unsupported entity type for first name extraction: {}", entity.getClass());
-        throw new IllegalArgumentException("Unsupported entity type");
-    }
-
-    private <T> String extractLastName(T entity) {
-        if (entity instanceof TrainerDto trainerDto) {
-            LOGGER.debug("Extracting last name for TrainerDto: {}", trainerDto.getLastName());
-            return trainerDto.getLastName();
-        } else if (entity instanceof TraineeDto traineeDto) {
-            LOGGER.debug("Extracting last name for TraineeDto: {}", traineeDto.getLastName());
-            return traineeDto.getLastName();
-        }
-        LOGGER.warn("Unsupported entity type for last name extraction: {}", entity.getClass());
-        throw new IllegalArgumentException("Unsupported entity type");
-    }
-
-    private boolean checkIfUsernameExists(String username) {
-        LOGGER.debug("Checking if username '{}' exists in any repository", username);
-        for (UserRepository repository : repositoryRegistry.values()) {
-            if (repository.existsByUsername(username)) {
-                LOGGER.debug("Username '{}' exists in repository: {}", username, repository.getClass().getSimpleName());
-                return true;
-            }
-        }
-        LOGGER.debug("Username '{}' does not exist in any repository", username);
-        return false;
+    boolean checkIfUsernameExists(String username) {
+        LOGGER.debug("Checking if username '{}' exists in UserRepository", username);
+        return userRepository.existsByUsername(username);
     }
 }
+

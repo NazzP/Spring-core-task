@@ -1,6 +1,10 @@
 package org.example.gymcrmsystem.facade;
 
 import org.example.gymcrmsystem.dto.TrainingDto;
+import org.example.gymcrmsystem.exception.EntityNotFoundException;
+
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Interface for managing operations related to training sessions.
@@ -13,23 +17,35 @@ import org.example.gymcrmsystem.dto.TrainingDto;
 public interface TrainingFacade {
 
     /**
-     * Creates a new training session.
-     * <p>
-     * This method accepts a {@link TrainingDto} object containing the details of the new training session.
-     * It passes the DTO to the service layer to handle the actual creation of the training.
-     * <p>
-     * @param trainingDto A {@link TrainingDto} object containing the data for the new training session.
-     * @return The created {@link TrainingDto} with the assigned ID and any other relevant information.
+     * Adds a new training session.
+     *
+     * @param trainingDto A {@link TrainingDto} object containing the details of the new training session.
+     * @return The created {@link TrainingDto} with the assigned ID and relevant information.
      */
-    TrainingDto createTraining(TrainingDto trainingDto);
+    TrainingDto addTraining(TrainingDto trainingDto) throws EntityNotFoundException;
 
     /**
-     * Retrieves a training session's information by its unique ID.
-     * <p>
-     * This method queries the service layer to retrieve the {@link TrainingDto} of the training session with the provided ID.
-     * <p>
-     * @param id The unique ID of the training session to be retrieved.
-     * @return The {@link TrainingDto} containing the training session's information.
+     * Retrieves a list of training sessions for a specific trainee.
+     *
+     * @param traineeUsername The username of the trainee whose training sessions are to be retrieved.
+     * @param fromDate        The start date for filtering training sessions.
+     * @param toDate          The end date for filtering training sessions.
+     * @param trainingType    The type of training sessions to filter by.
+     * @return A list of {@link TrainingDto} objects representing the trainee's training sessions.
      */
-    TrainingDto getTrainingById(Long id);
+    List<TrainingDto> getTraineeTrainings(String traineeUsername, LocalDate fromDate,
+                                          LocalDate toDate, String traineeName, String trainingType) throws EntityNotFoundException;
+
+    /**
+     * Retrieves a list of training sessions for a specific trainer.
+     *
+     * @param trainerUsername The username of the trainer whose training sessions are to be retrieved.
+     * @param fromDate        The start date for filtering training sessions.
+     * @param toDate          The end date for filtering training sessions.
+     * @param trainerName     The firstName of Trainer whose training sessions are to be retrieved.
+     * @return A list of {@link TrainingDto} objects representing the trainer's training sessions.
+     */
+    List<TrainingDto> getTrainerTrainings(String trainerUsername, LocalDate fromDate,
+                                          LocalDate toDate, String trainerName) throws EntityNotFoundException;
 }
+

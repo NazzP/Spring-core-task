@@ -1,4 +1,4 @@
-package org.example.gymcrmsystem.facade.Impl;
+package org.example.gymcrmsystem.facade.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.gymcrmsystem.dto.TraineeDto;
@@ -18,17 +18,32 @@ public class TraineeFacadeImpl implements TraineeFacade {
     }
 
     @Override
-    public TraineeDto getTraineeById(Long id) {
-        return traineeService.select(id);
+    public TraineeDto getTraineeByUsername(String username) {
+        return traineeService.select(username);
     }
 
     @Override
-    public TraineeDto updateTrainee(Long id, TraineeDto traineeDto) {
-        return traineeService.update(id, traineeDto);
+    public TraineeDto updateTrainee(String username, TraineeDto traineeDto) {
+        return traineeService.update(username, traineeDto);
     }
 
     @Override
-    public void deleteTrainee(Long id) {
-        traineeService.delete(id);
+    public void deleteTrainee(String username) {
+        traineeService.delete(username);
+    }
+
+    @Override
+    public void changeTraineeStatus(String username, Boolean isActive) {
+        traineeService.changeStatus(username, isActive);
+    }
+
+    @Override
+    public boolean authenticateTrainee(String username, String password) {
+        return traineeService.authenticateTrainee(username, password);
+    }
+
+    @Override
+    public void changeTraineePassword(String username, String lastPassword, String newPassword) {
+        traineeService.changePassword(username, lastPassword, newPassword);
     }
 }

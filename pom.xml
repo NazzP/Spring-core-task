@@ -10,26 +10,38 @@
     </parent>
 
     <groupId>org.example</groupId>
-    <artifactId>Gym-CRM-System</artifactId>
+    <artifactId>GymCrmSystem</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Gym-CRM-System</name>
-    <description>Gym-CRM-System</description>
+    <packaging>war</packaging>
+    <name>GymCrmSystem</name>
+    <description>GymCrmSystem</description>
 
     <properties>
         <java.version>17</java.version>
-        <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
-        <org.apache.maven.plugins.version>3.10.1</org.apache.maven.plugins.version>
         <spring.version>6.2.0</spring.version>
+        <org.springframework.data.version>3.4.0</org.springframework.data.version>
+        <jakarta.persistence.version>3.0.0</jakarta.persistence.version>
+        <org.hibernate.version>5.6.15.Final</org.hibernate.version>
+        <com.zaxxer.version>6.2.0</com.zaxxer.version>
+        <org.hibernate.validator.version>6.1.2.Final</org.hibernate.validator.version>
+        <jakarta.validation.version>3.1.0</jakarta.validation.version>
+        <jakarta.el.version>6.0.0</jakarta.el.version>
+        <org.glassfish.jakarta.el.version>4.0.2</org.glassfish.jakarta.el.version>
+        <org.postgresql.version>42.7.4</org.postgresql.version>
+        <com.h2database.version>2.3.232</com.h2database.version>
         <org.mockito.version>5.5.0</org.mockito.version>
         <org.mockito-inline.version>5.2.0</org.mockito-inline.version>
         <org.junit.jupiter.version>5.11.4</org.junit.jupiter.version>
+        <org.testcontainers.version>1.20.4</org.testcontainers.version>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <com.fasterxml.jackson.core.version>2.18.1</com.fasterxml.jackson.core.version>
-        <org.apache.tomcat.embed.version>11.0.0</org.apache.tomcat.embed.version>
         <org.slf4j.version>2.0.16</org.slf4j.version>
         <ch.qos.logback.version>1.5.15</ch.qos.logback.version>
         <org.projectlombok.version>1.18.36</org.projectlombok.version>
         <org.jacoco.version>0.8.12</org.jacoco.version>
+        <org.apache.tomcat.embed.version>11.0.0</org.apache.tomcat.embed.version>
+        <org.apache.maven.plugins.version>3.10.1</org.apache.maven.plugins.version>
+        <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
     </properties>
 
     <dependencies>
@@ -54,10 +66,96 @@
             <version>${spring.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>${org.springframework.data.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>${jakarta.persistence.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core-jakarta</artifactId>
+            <version>${org.hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${com.zaxxer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${org.hibernate.validator.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>${jakarta.validation.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.el</groupId>
+            <artifactId>jakarta.el-api</artifactId>
+            <version>${jakarta.el.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.el</artifactId>
+            <version>${org.glassfish.jakarta.el.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${com.h2database.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${org.postgresql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${ch.qos.logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${org.mapstruct.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${com.fasterxml.jackson.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.18.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>${org.apache.tomcat.embed.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <scope>provided</scope>
             <version>${org.projectlombok.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -90,33 +188,31 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${org.slf4j.version}</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${org.testcontainers.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${ch.qos.logback.version}</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${org.testcontainers.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${org.mapstruct.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${com.fasterxml.jackson.core.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-core</artifactId>
-            <version>${org.apache.tomcat.embed.version}</version>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -182,6 +278,19 @@
                                 </rule>
                             </rules>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
